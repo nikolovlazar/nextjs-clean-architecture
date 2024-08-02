@@ -31,7 +31,7 @@
     --chart-5: 27 87% 67%;
   }
 
-  .dark {
+  :root[class~="dark"] {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
@@ -60,10 +60,7 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-muted/80 dark:bg-muted/20;
   }
 }
