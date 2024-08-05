@@ -1,24 +1,41 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./_components/ui/avatar";
-import { Button } from "./_components/ui/button";
+import { validateRequest } from "@/lucia";
 import { Separator } from "./_components/ui/separator";
 import { AddTodo } from "./add-todo";
 import { Todos } from "./todos";
+import { redirect } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "./_components/ui/card";
+import { UserMenu } from "./_components/ui/user-menu";
+import { todos as todosSchema } from "@/drizzle/schema";
+import { eq } from "drizzle-orm";
+import { db } from "@/drizzle";
 
-export default function Home() {
+export default async function Home() {
+  const { user } = await validateRequest();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const todos = await db.query.todos.findMany({
+    where: eq(todosSchema.userId, user.id),
+  });
+
   return (
-    <main className="flex flex-col gap-4 items-start justify-between p-8 bg-card rounded-md shadow-md w-full max-w-lg">
-      <div className="flex gap-4 items-center w-full">
-        <Avatar>
-          <AvatarImage src="" />
-          <AvatarFallback>LN</AvatarFallback>
-        </Avatar>
-        <h2 className="text-xl font-semibold flex-1">Welcome, user</h2>
-        <Button variant="link">Sign out</Button>
-      </div>
+    <Card className="w-full max-w-lg">
+      <CardHeader className="flex flex-row items-center">
+        <CardTitle className="flex-1">TODOs</CardTitle>
+        <UserMenu />
+      </CardHeader>
       <Separator />
-      <h2 className="text-lg font-bold">TODOs:</h2>
-      <AddTodo />
-      <Todos />
-    </main>
+      <CardContent className="flex flex-col p-6 gap-4">
+        <AddTodo />
+        <Todos todos={todos} />
+      </CardContent>
+    </Card>
   );
 }
