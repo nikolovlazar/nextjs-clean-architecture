@@ -6,6 +6,7 @@ This repo is an example of how to achieve Clean Architecture in Next.js. There's
 
 ![Clean Architecture Diagram](./assets/clean-architecture-diagram.jpg)
 
+> [!Note]
 > 👆 I drew a simplified version of the [original Clean Architecture diagram](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html). I simplified it in a way that makes more sense to me, and it's easier to comprehend.
 
 I strongly recommend you to read [the original article by Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) if this is your first time hearing about Clean Architecture, but I'll try to summarize it for you below.
@@ -21,10 +22,7 @@ Clean Architecture, and similar/derived architectures, all have the same goal - 
 
 Clean Architecture achieves this through defining a _dependency hierarchy_ - layers depend only on layers **below them**, but not above.
 
-## Project structure
-
-> [!NOTE]
-> Only the important bits
+## Project structure (only the important bits)
 
 - `app` - _Frameworks & Drivers Layer_ - basically everything Next.js (pages, server actions, components, styles etc...) or whatever "consumes" the app's logic
 - `di` - Dependency Injection - a folder where we setup the DI container and the modules
