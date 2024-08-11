@@ -3,17 +3,26 @@
 import { Plus } from "lucide-react";
 import { Button } from "./_components/ui/button";
 import { Input } from "./_components/ui/input";
-import { addTodo } from "./actions";
+import { createTodo } from "./actions";
 import { useRef } from "react";
+import { toast } from "sonner";
 
-export function AddTodo() {
+export function CreateTodo() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    await addTodo(formData);
+    const res = await createTodo(formData);
+
+    if (res) {
+      if (res.error) {
+        toast.error(res.error);
+      } else if (res.success) {
+        toast.success("Todo created!");
+      }
+    }
 
     if (inputRef.current) {
       inputRef.current.value = "";

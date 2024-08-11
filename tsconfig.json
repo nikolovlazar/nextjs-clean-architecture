@@ -10,6 +10,9 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "types": ["reflect-metadata"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "jsx": "preserve",
     "incremental": true,
     "plugins": [

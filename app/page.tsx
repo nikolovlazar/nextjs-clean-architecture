@@ -1,29 +1,47 @@
-import { validateRequest } from "@/lucia";
-import { Separator } from "./_components/ui/separator";
-import { AddTodo } from "./add-todo";
-import { Todos } from "./todos";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+
+import { SESSION_COOKIE } from "@/config";
+import {
+  AuthenticationError,
+  UnauthenticatedError,
+} from "@/src/entities/errors/auth";
+import { Todo } from "@/src/entities/models/todo";
+import { getTodosForUserController } from "@/src/interface-adapters/controllers/todos/get-todos-for-user.controller";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "./_components/ui/card";
+import { Separator } from "./_components/ui/separator";
 import { UserMenu } from "./_components/ui/user-menu";
-import { todos as todosSchema } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
-import { db } from "@/drizzle";
+import { CreateTodo } from "./add-todo";
+import { Todos } from "./todos";
+
+async function getTodos(sessionId: string | undefined) {
+  try {
+    return await getTodosForUserController(sessionId);
+  } catch (err) {
+    if (
+      err instanceof UnauthenticatedError ||
+      err instanceof AuthenticationError
+    ) {
+      redirect("/sign-in");
+    }
+    throw err;
+  }
+}
 
 export default async function Home() {
-  const { user } = await validateRequest();
+  const sessionId = cookies().get(SESSION_COOKIE)?.value;
 
-  if (!user) {
-    redirect("/sign-in");
+  let todos: Todo[];
+  try {
+    todos = await getTodos(sessionId);
+  } catch (err) {
+    throw err;
   }
-
-  const todos = await db.query.todos.findMany({
-    where: eq(todosSchema.userId, user.id),
-  });
 
   return (
     <Card className="w-full max-w-lg">
@@ -33,7 +51,7 @@ export default async function Home() {
       </CardHeader>
       <Separator />
       <CardContent className="flex flex-col p-6 gap-4">
-        <AddTodo />
+        <CreateTodo />
         <Todos todos={todos} />
       </CardContent>
     </Card>

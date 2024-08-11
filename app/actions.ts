@@ -1,55 +1,57 @@
 "use server";
 
-import { db } from "@/drizzle";
-import { todos } from "@/drizzle/schema";
-import { validateRequest } from "@/lucia";
-import { eq } from "drizzle-orm";
+import { SESSION_COOKIE } from "@/config";
+import { UnauthenticatedError } from "@/src/entities/errors/auth";
+import { InputParseError, NotFoundError } from "@/src/entities/errors/common";
+import { createTodoController } from "@/src/interface-adapters/controllers/todos/create-todo.controller";
+import { toggleTodoController } from "@/src/interface-adapters/controllers/todos/toggle-todo.controller";
 import { revalidatePath } from "next/cache";
-import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 
-export async function addTodo(formData: FormData) {
-  const { user } = await validateRequest();
-
-  if (!user) {
-    throw new Error("Must be logged in to create todos.");
+export async function createTodo(formData: FormData) {
+  try {
+    const data = Object.fromEntries(formData.entries());
+    const sessionId = cookies().get(SESSION_COOKIE)?.value;
+    await createTodoController(data, sessionId);
+  } catch (err) {
+    if (err instanceof InputParseError) {
+      return { error: err.message };
+    }
+    if (err instanceof UnauthenticatedError) {
+      return { error: "Must be logged in to create a todo" };
+    }
+    // TODO: report "err" to Sentry
+    return {
+      error:
+        "An error happened while creating a todo. The developers have been notified. Please try again later.",
+    };
   }
-
-  const todoValue = formData.get("todo")?.toString();
-
-  if (!todoValue) {
-    throw new Error('"todo" value is required');
-  }
-
-  await db
-    .insert(todos)
-    .values({ todo: todoValue, userId: user.id, completed: false });
 
   revalidatePath("/");
+  return { success: true };
 }
 
 export async function toggleTodo(todoId: number) {
-  const { user } = await validateRequest();
-
-  if (!user) {
-    throw new Error("Must be logged in to toggle todos.");
+  try {
+    const sessionId = cookies().get(SESSION_COOKIE)?.value;
+    await toggleTodoController({ todoId }, sessionId);
+  } catch (err) {
+    if (err instanceof InputParseError) {
+      return { error: err.message };
+    }
+    if (err instanceof UnauthenticatedError) {
+      return { error: "Must be logged in to create a todo" };
+    }
+    if (err instanceof NotFoundError) {
+      return { error: "Todo does not exist" };
+    }
+    // TODO: report "err" to Sentry
+    return {
+      error:
+        "An error happened while toggling the todo. The developers have been notified. Please try again later.",
+    };
   }
-
-  const existingTodo = await db.query.todos.findFirst({
-    where: eq(todos.id, todoId),
-  });
-
-  if (!existingTodo) {
-    notFound();
-  }
-
-  if (existingTodo.userId !== user.id) {
-    throw new Error("Unauthorized");
-  }
-
-  await db
-    .update(todos)
-    .set({ ...existingTodo, completed: !existingTodo.completed })
-    .where(eq(todos.id, todoId));
 
   revalidatePath("/");
+  return { success: true };
 }

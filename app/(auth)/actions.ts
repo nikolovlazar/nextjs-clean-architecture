@@ -1,65 +1,46 @@
 "use server";
 
-import { db } from "@/drizzle";
-import { users } from "@/drizzle/schema";
-import { lucia, validateRequest } from "@/lucia";
-import { hash, verify } from "@node-rs/argon2";
-import { eq } from "drizzle-orm";
-import { generateIdFromEntropySize } from "lucia";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { Cookie } from "@/src/entities/models/cookie";
+import { signInController } from "@/src/interface-adapters/controllers/auth/sign-in.controller";
+import { signUpController } from "@/src/interface-adapters/controllers/auth/sign-up.controller";
+import { signOutController } from "@/src/interface-adapters/controllers/auth/sign-out.controller";
+import { SESSION_COOKIE } from "@/config";
+import { InputParseError } from "@/src/entities/errors/common";
+import {
+  AuthenticationError,
+  UnauthenticatedError,
+} from "@/src/entities/errors/auth";
+
 export async function signUp(formData: FormData) {
-  const username = formData.get("username");
-  if (
-    typeof username !== "string" ||
-    username.length < 3 ||
-    username.length > 31
-  ) {
+  const username = formData.get("username")?.toString();
+  const password = formData.get("password")?.toString();
+  const confirmPassword = formData.get("confirm_password")?.toString();
+
+  let sessionCookie: Cookie;
+  try {
+    const { cookie } = await signUpController({
+      username,
+      password,
+      confirm_password: confirmPassword,
+    });
+    sessionCookie = cookie;
+  } catch (err) {
+    if (err instanceof InputParseError) {
+      return {
+        error:
+          "Invalid data. Make sure the Password and Confirm Password match.",
+      };
+    }
+    // TODO: report error to Sentry
     return {
-      error: "Invalid username",
+      error:
+        "An error happened. The developers have been notified. Please try again later.",
     };
   }
 
-  const password = formData.get("password");
-  if (
-    typeof password !== "string" ||
-    password.length < 6 ||
-    password.length > 255
-  ) {
-    return {
-      error: "Invalid password",
-    };
-  }
-
-  const existingUser = await db.query.users.findFirst({
-    where: eq(users.username, username),
-  });
-
-  if (existingUser) {
-    return {
-      error: "Username taken",
-    };
-  }
-
-  const passwordHash = await hash(password, {
-    // recommended minimum parameters
-    memoryCost: 19456,
-    timeCost: 2,
-    outputLen: 32,
-    parallelism: 1,
-  });
-
-  const userId = generateIdFromEntropySize(10); // 16 characters long
-
-  await db.insert(users).values({
-    id: userId,
-    username,
-    password_hash: passwordHash,
-  });
-
-  const session = await lucia.createSession(userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
     sessionCookie.name,
     sessionCookie.value,
@@ -70,53 +51,25 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signIn(formData: FormData) {
-  const username = formData.get("username");
-  if (
-    typeof username !== "string" ||
-    username.length < 3 ||
-    username.length > 31
-  ) {
+  const username = formData.get("username")?.toString();
+  const password = formData.get("password")?.toString();
+
+  let sessionCookie: Cookie;
+  try {
+    sessionCookie = await signInController({ username, password });
+  } catch (err) {
+    if (err instanceof InputParseError || err instanceof AuthenticationError) {
+      return {
+        error: "Incorrect username or password",
+      };
+    }
+    // TODO: report error to Sentry
     return {
-      error: "Invalid username",
+      error:
+        "An error happened. The developers have been notified. Please try again later.",
     };
   }
 
-  const password = formData.get("password");
-  if (
-    typeof password !== "string" ||
-    password.length < 6 ||
-    password.length > 255
-  ) {
-    return {
-      error: "Invalid password",
-    };
-  }
-
-  const existingUser = await db.query.users.findFirst({
-    where: eq(users.username, username.toLowerCase()),
-  });
-
-  if (!existingUser) {
-    return {
-      error: "Incorrect username or password",
-    };
-  }
-
-  const validPassword = await verify(existingUser.password_hash, password, {
-    memoryCost: 19456,
-    timeCost: 2,
-    outputLen: 32,
-    parallelism: 1,
-  });
-
-  if (!validPassword) {
-    return {
-      error: "Incorrect username or password",
-    };
-  }
-
-  const session = await lucia.createSession(existingUser.id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
     sessionCookie.name,
     sessionCookie.value,
@@ -127,22 +80,20 @@ export async function signIn(formData: FormData) {
 }
 
 export async function signOut() {
-  const { session } = await validateRequest();
+  const cookiesStore = cookies();
+  const sessionId = cookiesStore.get(SESSION_COOKIE)?.value;
 
-  if (!session) {
-    return {
-      error: "Unauthorized",
-    };
+  let blankCookie: Cookie;
+  try {
+    blankCookie = await signOutController(sessionId);
+  } catch (err) {
+    if (err instanceof UnauthenticatedError) {
+      redirect("/sign-in");
+    }
+    throw err;
   }
 
-  await lucia.invalidateSession(session.id);
+  cookies().set(blankCookie.name, blankCookie.value, blankCookie.attributes);
 
-  const sessionCookie = lucia.createBlankSessionCookie();
-  cookies().set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes,
-  );
-
-  redirect("sign-in");
+  redirect("/sign-in");
 }
