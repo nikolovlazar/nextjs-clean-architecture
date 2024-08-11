@@ -24,14 +24,14 @@ Clean Architecture achieves this through defining a _dependency hierarchy_ - lay
 
 ## Project structure (only the important bits)
 
-- `app` - _Frameworks & Drivers Layer_ - basically everything Next.js (pages, server actions, components, styles etc...) or whatever "consumes" the app's logic
+- `app` - **Frameworks & Drivers Layer** - basically everything Next.js (pages, server actions, components, styles etc...) or whatever "consumes" the app's logic
 - `di` - Dependency Injection - a folder where we setup the DI container and the modules
 - `drizzle` - Everything DB - initializing the DB client, defining schema, migrations
 - `src` - The "root" of the system
-  - `application` - _Application Layer_ - holds use cases and interfaces for repositories and services
-  - `entities` - _Entities Layer_ - holds models and custom errors
-  - `infrastructure` - _Infrastructure Layer_ - holds implementations of repositories and services, and pulls in the interfaces from `application`
-  - `interface-adapters` - _Interface Adapters Layer_ - holds controllers that serve as an entry point to the system (used in Frameworks & Drivers layer to interact with the system)
+  - `application` - **Application Layer** - holds use cases and interfaces for repositories and services
+  - `entities` - **Entities Layer** - holds models and custom errors
+  - `infrastructure` - **Infrastructure Layer** - holds implementations of repositories and services, and pulls in the interfaces from `application`
+  - `interface-adapters` - **Interface Adapters Layer** - holds controllers that serve as an entry point to the system (used in Frameworks & Drivers layer to interact with the system)
 - `tests` - Unit tests live here - the `unit` subfolder's structure matches `src`
 - `next.config.mjs` - Next.js configuration - take note of the `webpack.BannerPlugin` line! That's how you setup [inversify](https://inversify.io) in Next.js, the _Inversion of Control_ library.
 - `tsconfig.json` - Take note of lines: 13, 14, and 15!
