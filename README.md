@@ -7,7 +7,7 @@ This repo is an example of how to achieve Clean Architecture in Next.js. There's
 ![Clean Architecture Diagram](./assets/clean-architecture-diagram.jpg)
 
 > [!Note]
-> 👆 I drew a simplified version of the [original Clean Architecture diagram](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html). I simplified it in a way that makes more sense to me, and it's easier to comprehend. I hope it helps you too!
+> 👆 I drew a simplified version of the [original Clean Architecture diagram](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html). I simplified it in a way that makes more sense to me, and it's easier to comprehend. I hope it helps you too.
 
 I strongly recommend you to read [the original article by Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) if this is your first time hearing about Clean Architecture, but I'll try to summarize it for you below.
 
