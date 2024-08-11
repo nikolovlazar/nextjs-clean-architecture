@@ -73,13 +73,13 @@ Clean Architecture achieves this through defining a _dependency hierarchy_ - lay
   - _Services_ are shared services that are being used across the application - like an authentication service, or email service, or implement external systems like Stripe (create payments, validate receipts etc...). These services also use and depend on other frameworks and libraries. That's why their implementation is kept here alongside the repositories.
   - Since we don't want any layer to depend on this one (and transitively depend on the database and all the services), we use the [_Dependency Inversion principle_](https://en.wikipedia.org/wiki/Dependency_inversion_principle). This allows us to depend only on the interfaces defined in the _Application Layer_, instead of the implementations in the _Infrastructure Layer_. We use an [_Inversion of Control_](https://en.wikipedia.org/wiki/Inversion_of_control) library like [inversify](https://inversify.io) to abstract the implementation behind the interfaces and "inject" it whenever we need it. We create the abstraction in the `di` directory. We "register" the repositories and services using Symbols as identifiers, and we "request" the services and repositories using those symbols when we need the actual implementation. That's how we can use the implementation, without needing to explicitly depend on it (import it).
 
-## Q&A
+## FAQ
 
 > [!TIP]
-> If you have a question not covered by the Q&A, feel free to either [open an Issue](https://github.com/nikolovlazar/nextjs-clean-architecture/issues/new) in this repo, or join [my Discord server](https://creatures.sh) and start a conversation there.
+> If you have a question not covered by the FAQ, feel free to either [open an Issue](https://github.com/nikolovlazar/nextjs-clean-architecture/issues/new) in this repo, or join [my Discord server](https://creatures.sh) and start a conversation there.
 
 <details>
-  <summary>Should I start implementing Clean Architecture immediately when I create my Next.js project?</summary>
+  <summary><b>Should I start implementing Clean Architecture immediately when I create my Next.js project?</b></summary>
 
 I'd say **no**. If you're starting a brand new project, I'd advise you to focus on achieving an MVP status as fast as possible (so you can validate your idea / see if there's a future for your project). When things start to get serious (more features start to get implemented, your user base experiences a significant growth, or you're onboarding other developers in your project), that's when you'd want to invest some time into adapting this architecture (or any architecture for that matter).
 
@@ -87,7 +87,7 @@ If you're already deep in the weeds on a project, you (and your team) can plan f
 
 </details>
 <details>
-<summary>This looks like overengineering, and complicates feature development.</summary>
+<summary><b>This looks like overengineering, and complicates feature development.</b></summary>
 
 If you don't spend more than 3 minutes thinking about this, then yes, it does look like overengineering. But if you do, you'll realize that **architecture = discipline**. The architecture is a contract between the developers that defines what goes where. It actually **simplifies** the feature development because it makes the codebase predictable, and it makes those decisions for you.
 
@@ -97,13 +97,13 @@ Clean Architecture gives you a shortcut and a predefined architecture that's bee
 
 </details>
 <details>
-<summary>Should I apply Clean Architecture in all of my projects?</summary>
+<summary><b>Should I apply Clean Architecture in all of my projects?</b></summary>
 
 **No**. Not if you don't expect the project to grow, both in number of features, or number of users, or number of developers working on it.
 
 </details>
 <details>
-  <summary>What are other similar architectures to Clean Architecture?</summary>
+  <summary><b>What are other similar architectures to Clean Architecture?</b></summary>
 
 As mentioned in the [original blog post](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) I mentioned at the top of the README, you got:
 
