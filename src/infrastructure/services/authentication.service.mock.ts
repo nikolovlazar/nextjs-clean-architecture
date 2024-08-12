@@ -34,11 +34,7 @@ export class MockAuthenticationService implements IAuthenticationService {
 
     const user = await this._usersRepository.getUser(result.user.id);
 
-    if (!user) {
-      throw new AuthenticationError("User doesn't exist");
-    }
-
-    return { user, session: result.session };
+    return { user: user!, session: result.session };
   }
 
   async createSession(
