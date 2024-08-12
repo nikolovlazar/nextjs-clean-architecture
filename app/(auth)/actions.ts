@@ -110,7 +110,10 @@ export async function signOut() {
       try {
         blankCookie = await signOutController(sessionId);
       } catch (err) {
-        if (err instanceof UnauthenticatedError) {
+        if (
+          err instanceof UnauthenticatedError ||
+          err instanceof InputParseError
+        ) {
           redirect("/sign-in");
         }
         captureException(err);

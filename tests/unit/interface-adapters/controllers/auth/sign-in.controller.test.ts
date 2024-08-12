@@ -63,11 +63,11 @@ it("throws for invalid input", () => {
   ).rejects.toBeInstanceOf(InputParseError);
 });
 
-it("throws for invalid credentials", () => {
-  expect(
+it("throws for invalid credentials", async () => {
+  await expect(
     signInController({ username: "nonexisting", password: "doesntmatter" }),
   ).rejects.toBeInstanceOf(AuthenticationError);
   expect(
-    signInController({ username: "one", password: "wrong" }),
+    signInController({ username: "one", password: "wrongpass" }),
   ).rejects.toBeInstanceOf(AuthenticationError);
 });

@@ -23,13 +23,15 @@ it("returns users todos", async () => {
     password: "password-one",
   });
 
-  expect(getTodosForUserController(session.id)).resolves.toMatchObject([]);
+  await expect(getTodosForUserController(session.id)).resolves.toMatchObject(
+    [],
+  );
 
   await createTodoUseCase({ todo: "todo-one" }, session.userId);
   await createTodoUseCase({ todo: "todo-two" }, session.userId);
   await createTodoUseCase({ todo: "todo-three" }, session.userId);
 
-  expect(getTodosForUserController(session.id)).resolves.toMatchObject([
+  await expect(getTodosForUserController(session.id)).resolves.toMatchObject([
     {
       todo: "todo-one",
       completed: false,
