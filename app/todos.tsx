@@ -1,35 +1,27 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { toast } from "sonner";
 
 import { Checkbox } from "./_components/ui/checkbox";
 import { cn } from "./_components/utils";
+import { toggleTodo } from "./actions";
 
 export function Todos({
   todos,
 }: {
   todos: { id: number; todo: string; userId: string; completed: boolean }[];
 }) {
-  const router = useRouter();
-
-  const handleToggle = useCallback(
-    async (id: number) => {
-      const res = await fetch(`/api/todos/${id}`, { method: "POST" });
-      if (res.ok) {
+  const handleToggle = useCallback(async (id: number) => {
+    const res = await toggleTodo(id);
+    if (res) {
+      if (res.error) {
+        toast.error(res.error);
+      } else if (res.success) {
         toast.success("Todo toggled!");
-        router.refresh();
-      } else {
-        const { error } = await res.json();
-        toast.error(error);
-        if (res.status === 401) {
-          router.push("/sign-in");
-        }
       }
-    },
-    [router],
-  );
+    }
+  }, []);
 
   return (
     <ul className="w-full">
