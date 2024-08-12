@@ -13,17 +13,26 @@ import { Label } from "../../_components/ui/label";
 import { Separator } from "../../_components/ui/separator";
 import { Button } from "../../_components/ui/button";
 import { useState } from "react";
-import { signIn } from "../actions";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
   const [error, setError] = useState<string>();
+  const router = useRouter();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const res = await signIn(formData);
-    if (res && res.error) {
-      setError(res.error);
+    const res = await fetch("/api/auth/sign-in", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (res.ok) {
+      router.push("/");
+    } else {
+      const { error } = await res.json();
+      setError(error);
     }
   };
 

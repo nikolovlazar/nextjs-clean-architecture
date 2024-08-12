@@ -1,18 +1,16 @@
+import { startSpan } from "@sentry/nextjs";
 import { inject, injectable } from "inversify";
 import { generateIdFromEntropySize, Lucia } from "lucia";
 
-import { luciaAdapter } from "@/drizzle";
-import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
-import {
-  AuthenticationError,
-  UnauthenticatedError,
-} from "@/src/entities/errors/auth";
-import { User } from "@/src/entities/models/user";
-import { Session, sessionSchema } from "@/src/entities/models/session";
-import { type IUsersRepository } from "@/src/application/repositories/users.repository.interface";
-import { Cookie } from "@/src/entities/models/cookie";
-import { DI_SYMBOLS } from "@/di/types";
 import { SESSION_COOKIE } from "@/config";
+import { DI_SYMBOLS } from "@/di/types";
+import { luciaAdapter } from "@/drizzle";
+import { type IUsersRepository } from "@/src/application/repositories/users.repository.interface";
+import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
+import { UnauthenticatedError } from "@/src/entities/errors/auth";
+import { Cookie } from "@/src/entities/models/cookie";
+import { Session, sessionSchema } from "@/src/entities/models/session";
+import { User } from "@/src/entities/models/user";
 
 @injectable()
 export class AuthenticationService implements IAuthenticationService {
@@ -41,39 +39,69 @@ export class AuthenticationService implements IAuthenticationService {
   async validateSession(
     sessionId: string,
   ): Promise<{ user: User; session: Session }> {
-    const result = await this._lucia.validateSession(sessionId);
+    return await startSpan(
+      { name: "AuthenticationService > validateSession" },
+      async () => {
+        const result = await startSpan(
+          { name: "lucia.validateSession", op: "function" },
+          () => this._lucia.validateSession(sessionId),
+        );
 
-    if (!result.user || !result.session) {
-      throw new UnauthenticatedError("Unauthenticated");
-    }
+        if (!result.user || !result.session) {
+          throw new UnauthenticatedError("Unauthenticated");
+        }
 
-    const user = await this._usersRepository.getUser(result.user.id);
+        const user = await this._usersRepository.getUser(result.user.id);
 
-    if (!user) {
-      throw new UnauthenticatedError("User doesn't exist");
-    }
+        if (!user) {
+          throw new UnauthenticatedError("User doesn't exist");
+        }
 
-    return { user, session: result.session };
+        return { user, session: result.session };
+      },
+    );
   }
 
   async createSession(
     user: User,
   ): Promise<{ session: Session; cookie: Cookie }> {
-    const luciaSession = await this._lucia.createSession(user.id, {});
-    const session = sessionSchema.parse(luciaSession);
-    const cookie = this._lucia.createSessionCookie(session.id);
+    return await startSpan(
+      { name: "AuthenticationService > createSession" },
+      async () => {
+        const luciaSession = await startSpan(
+          { name: "lucia.createSession", op: "function" },
+          () => this._lucia.createSession(user.id, {}),
+        );
 
-    return { session, cookie };
+        const session = sessionSchema.parse(luciaSession);
+        const cookie = startSpan(
+          { name: "lucia.createSessionCookie", op: "function" },
+          () => this._lucia.createSessionCookie(session.id),
+        );
+
+        return { session, cookie };
+      },
+    );
   }
 
   async invalidateSession(sessionId: string): Promise<{ blankCookie: Cookie }> {
-    await this._lucia.invalidateSession(sessionId);
-    const blankCookie = this._lucia.createBlankSessionCookie();
+    await startSpan({ name: "lucia.invalidateSession", op: "function" }, () =>
+      this._lucia.invalidateSession(sessionId),
+    );
+
+    const blankCookie = startSpan(
+      { name: "lucia.createBlankSessionCookie", op: "function" },
+      () => this._lucia.createBlankSessionCookie(),
+    );
+
     return { blankCookie };
   }
 
   generateUserId(): string {
-    return generateIdFromEntropySize(10);
+    return startSpan(
+      { name: "AuthenticationService > generateUserId", op: "function" },
+      () => generateIdFromEntropySize(10),
+    );
   }
 }
 

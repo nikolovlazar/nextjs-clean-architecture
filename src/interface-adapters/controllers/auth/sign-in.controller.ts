@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { startSpan } from "@sentry/nextjs";
 
 import { signInUseCase } from "@/src/application/use-cases/auth/sign-in.use-case";
 import { InputParseError } from "@/src/entities/errors/common";
@@ -12,12 +13,14 @@ const inputSchema = z.object({
 export async function signInController(
   input: Partial<z.infer<typeof inputSchema>>,
 ): Promise<Cookie> {
-  const { data, error: inputParseError } = inputSchema.safeParse(input);
+  return await startSpan({ name: "signIn Controller" }, async () => {
+    const { data, error: inputParseError } = inputSchema.safeParse(input);
 
-  if (inputParseError) {
-    throw new InputParseError("Invalid data", { cause: inputParseError });
-  }
+    if (inputParseError) {
+      throw new InputParseError("Invalid data", { cause: inputParseError });
+    }
 
-  const { cookie } = await signInUseCase(data);
-  return cookie;
+    const { cookie } = await signInUseCase(data);
+    return cookie;
+  });
 }

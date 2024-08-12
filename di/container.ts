@@ -1,4 +1,5 @@
 import { Container } from "inversify";
+import { startSpan } from "@sentry/nextjs";
 
 import { AuthenticationModule } from "./modules/authentication.module";
 import { TodosModule } from "./modules/todos.module";
@@ -28,7 +29,14 @@ if (process.env.NODE_ENV !== "test") {
 export function getInjection<K extends keyof typeof DI_SYMBOLS>(
   symbol: K,
 ): DI_RETURN_TYPES[K] {
-  return ApplicationContainer.get(DI_SYMBOLS[symbol]);
+  return startSpan(
+    {
+      name: "(di) getInjection",
+      op: "function",
+      attributes: { symbol: symbol.toString() },
+    },
+    () => ApplicationContainer.get(DI_SYMBOLS[symbol]),
+  );
 }
 
 export { ApplicationContainer };

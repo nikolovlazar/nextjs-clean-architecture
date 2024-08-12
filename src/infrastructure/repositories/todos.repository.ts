@@ -1,58 +1,119 @@
+import { eq } from "drizzle-orm";
+import { injectable } from "inversify";
+import { startSpan, captureException } from "@sentry/nextjs";
+
 import { db } from "@/drizzle";
 import { todos } from "@/drizzle/schema";
 import { ITodosRepository } from "@/src/application/repositories/todos.repository.interface";
 import { DatabaseOperationError } from "@/src/entities/errors/common";
 import { TodoInsert, Todo } from "@/src/entities/models/todo";
-import { eq } from "drizzle-orm";
-import { injectable } from "inversify";
 
 @injectable()
 export class TodosRepository implements ITodosRepository {
   async createTodo(todo: TodoInsert): Promise<Todo> {
-    try {
-      const [created] = await db.insert(todos).values(todo).returning();
-      if (created) {
-        return created;
-      } else {
-        throw new DatabaseOperationError("Cannot create todo");
-      }
-    } catch (err) {
-      throw err;
-    }
+    return await startSpan(
+      { name: "TodosRepository > createTodo" },
+      async () => {
+        try {
+          const query = db.insert(todos).values(todo).returning();
+
+          const [created] = await startSpan(
+            {
+              name: query.toSQL().sql,
+              op: "db.query",
+              attributes: { "db.system": "sqlite" },
+            },
+            () => query.execute(),
+          );
+
+          if (created) {
+            return created;
+          } else {
+            throw new DatabaseOperationError("Cannot create todo");
+          }
+        } catch (err) {
+          captureException(err, { data: todo });
+          throw err;
+        }
+      },
+    );
   }
 
   async getTodo(id: number): Promise<Todo | undefined> {
-    try {
-      const todo = await db.query.todos.findFirst({
-        where: eq(todos.id, id),
-      });
-      return todo;
-    } catch (err) {
-      throw err;
-    }
+    return await startSpan({ name: "TodosRepository > getTodo" }, async () => {
+      try {
+        const query = db.query.todos.findFirst({
+          where: eq(todos.id, id),
+        });
+
+        const todo = await startSpan(
+          {
+            name: query.toSQL().sql,
+            op: "db.query",
+            attributes: { "db.system": "sqlite" },
+          },
+          () => query.execute(),
+        );
+
+        return todo;
+      } catch (err) {
+        captureException(err);
+        throw err;
+      }
+    });
   }
 
   async getTodosForUser(userId: string): Promise<Todo[]> {
-    try {
-      const usersTodos = await db.query.todos.findMany({
-        where: eq(todos.userId, userId),
-      });
-      return usersTodos;
-    } catch (err) {
-      throw err;
-    }
+    return await startSpan(
+      { name: "TodosRepository > getTodosForUser" },
+      async () => {
+        try {
+          const query = db.query.todos.findMany({
+            where: eq(todos.userId, userId),
+          });
+
+          const usersTodos = await startSpan(
+            {
+              name: query.toSQL().sql,
+              op: "db.query",
+              attributes: { "db.system": "sqlite" },
+            },
+            () => query.execute(),
+          );
+          return usersTodos;
+        } catch (err) {
+          captureException(err);
+          throw err;
+        }
+      },
+    );
   }
 
   async updateTodo(id: number, input: Partial<TodoInsert>): Promise<Todo> {
-    try {
-      const [updated] = await db
-        .update(todos)
-        .set(input)
-        .where(eq(todos.id, id))
-        .returning();
-      return updated;
-    } catch (err) {
-      throw err;
-    }
+    return await startSpan(
+      { name: "TodosRepository > updateTodo" },
+      async () => {
+        try {
+          const query = db
+            .update(todos)
+            .set(input)
+            .where(eq(todos.id, id))
+            .returning();
+
+          const [updated] = await startSpan(
+            {
+              name: query.toSQL().sql,
+              op: "db.query",
+              attributes: { "db.system": "sqlite" },
+            },
+            () => query.execute(),
+          );
+          return updated;
+        } catch (err) {
+          captureException(err);
+          throw err;
+        }
+      },
+    );
   }
 }

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { startSpan } from "@sentry/nextjs";
 
 import { signUpUseCase } from "@/src/application/use-cases/auth/sign-up.use-case";
 import { InputParseError } from "@/src/entities/errors/common";
@@ -27,11 +28,13 @@ const inputSchema = z
 export async function signUpController(
   input: Partial<z.infer<typeof inputSchema>>,
 ): Promise<ReturnType<typeof signUpUseCase>> {
-  const { data, error: inputParseError } = inputSchema.safeParse(input);
+  return await startSpan({ name: "signUp Controller" }, async () => {
+    const { data, error: inputParseError } = inputSchema.safeParse(input);
 
-  if (inputParseError) {
-    throw new InputParseError("Invalid data", { cause: inputParseError });
-  }
+    if (inputParseError) {
+      throw new InputParseError("Invalid data", { cause: inputParseError });
+    }
 
-  return await signUpUseCase(data);
+    return await signUpUseCase(data);
+  });
 }

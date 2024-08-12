@@ -1,6 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { Button } from "../../_components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,12 +15,11 @@ import {
 import { Input } from "../../_components/ui/input";
 import { Label } from "../../_components/ui/label";
 import { Separator } from "../../_components/ui/separator";
-import { Button } from "../../_components/ui/button";
-import { signUp } from "../actions";
-import { useState } from "react";
 
 export default function SignUp() {
   const [error, setError] = useState<string>();
+  const router = useRouter();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -30,9 +33,15 @@ export default function SignUp() {
       return;
     }
 
-    const res = await signUp(formData);
-    if (res && res.error) {
-      setError(res.error);
+    const res = await fetch("/api/auth/sign-up", {
+      method: "POST",
+      body: formData,
+    });
+    if (res.ok) {
+      router.push("/");
+    } else {
+      const { error } = await res.json();
+      setError(error);
     }
   };
 

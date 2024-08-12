@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { captureException, startSpan } from "@sentry/nextjs";
 
 import { SESSION_COOKIE } from "@/config";
 import {
@@ -20,17 +21,26 @@ import { CreateTodo } from "./add-todo";
 import { Todos } from "./todos";
 
 async function getTodos(sessionId: string | undefined) {
-  try {
-    return await getTodosForUserController(sessionId);
-  } catch (err) {
-    if (
-      err instanceof UnauthenticatedError ||
-      err instanceof AuthenticationError
-    ) {
-      redirect("/sign-in");
-    }
-    throw err;
-  }
+  return await startSpan(
+    {
+      name: "getTodos",
+      op: "function.nextjs",
+    },
+    async () => {
+      try {
+        return await getTodosForUserController(sessionId);
+      } catch (err) {
+        if (
+          err instanceof UnauthenticatedError ||
+          err instanceof AuthenticationError
+        ) {
+          redirect("/sign-in");
+        }
+        captureException(err);
+        throw err;
+      }
+    },
+  );
 }
 
 export default async function Home() {
