@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1723503275302" clover="3.2.0">
-  <project timestamp="1723503275302" name="All files">
+<coverage generated="1723503723356" clover="3.2.0">
+  <project timestamp="1723503723357" name="All files">
     <metrics statements="501" coveredstatements="182" conditionals="129" coveredconditionals="39" methods="159" coveredmethods="65" elements="789" coveredelements="286" complexity="0" loc="501" ncloc="501" packages="18" files="59" classes="59"/>
     <package name="nextjs-clean-architecture">
       <metrics statements="14" coveredstatements="1" conditionals="6" coveredconditionals="0" methods="2" coveredmethods="0"/>
@@ -502,20 +502,20 @@
       <metrics statements="85" coveredstatements="25" conditionals="4" coveredconditionals="0" methods="35" coveredmethods="14"/>
       <file name="todos.repository.mock.ts" path="/Users/lazarnikolov/projects/nikolovlazar/nextjs-clean-architecture/src/infrastructure/repositories/todos.repository.mock.ts">
         <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="8"/>
-        <line num="6" count="12" type="stmt"/>
-        <line num="10" count="10" type="stmt"/>
-        <line num="14" count="13" type="stmt"/>
+        <line num="7" count="12" type="stmt"/>
+        <line num="11" count="10" type="stmt"/>
         <line num="15" count="13" type="stmt"/>
         <line num="16" count="13" type="stmt"/>
         <line num="17" count="13" type="stmt"/>
-        <line num="21" count="6" type="stmt"/>
+        <line num="18" count="13" type="stmt"/>
         <line num="22" count="6" type="stmt"/>
-        <line num="26" count="6" type="stmt"/>
-        <line num="27" count="4" type="stmt"/>
-        <line num="31" count="3" type="stmt"/>
+        <line num="23" count="6" type="stmt"/>
+        <line num="27" count="6" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
         <line num="32" count="3" type="stmt"/>
-        <line num="36" count="3" type="stmt"/>
+        <line num="33" count="3" type="stmt"/>
         <line num="37" count="3" type="stmt"/>
+        <line num="38" count="3" type="stmt"/>
       </file>
       <file name="todos.repository.ts" path="/Users/lazarnikolov/projects/nikolovlazar/nextjs-clean-architecture/src/infrastructure/repositories/todos.repository.ts">
         <metrics statements="35" coveredstatements="1" conditionals="2" coveredconditionals="0" methods="12" coveredmethods="0"/>

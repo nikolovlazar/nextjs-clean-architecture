@@ -1,6 +1,7 @@
-import { ITodosRepository } from "@/src/application/repositories/todos.repository.interface";
-import { TodoInsert, Todo } from "@/src/entities/models/todo";
 import { injectable } from "inversify";
+
+import { ITodosRepository } from "@/src/application/repositories/todos.repository.interface";
+import { Todo, TodoInsert } from "@/src/entities/models/todo";
 
 @injectable()
 export class MockTodosRepository implements ITodosRepository {
