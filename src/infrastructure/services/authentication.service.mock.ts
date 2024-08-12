@@ -1,10 +1,7 @@
 import { inject, injectable } from "inversify";
 
 import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
-import {
-  AuthenticationError,
-  UnauthenticatedError,
-} from "@/src/entities/errors/auth";
+import { UnauthenticatedError } from "@/src/entities/errors/auth";
 import { User } from "@/src/entities/models/user";
 import { Session, sessionSchema } from "@/src/entities/models/session";
 import { type IUsersRepository } from "@/src/application/repositories/users.repository.interface";
