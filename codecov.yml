@@ -6,11 +6,10 @@ comment:
   require_head: true
   hide_project_coverage: false
 ignore:
-  - "app/"
-  - "di/"
-  - "drizzle/"
-  - ./*.mjs
-  - ./*.ts
+  - "app"
+  - "di"
+  - "drizzle"
+  - "test/coverage"
   - src/entities
   - src/infrastructure/repositories/todos.repository.ts
   - src/infrastructure/repositories/users.repository.ts
