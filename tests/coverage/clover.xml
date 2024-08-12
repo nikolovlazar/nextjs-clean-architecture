@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1723503723356" clover="3.2.0">
-  <project timestamp="1723503723357" name="All files">
+<coverage generated="1723503988438" clover="3.2.0">
+  <project timestamp="1723503988438" name="All files">
     <metrics statements="501" coveredstatements="182" conditionals="129" coveredconditionals="39" methods="159" coveredmethods="65" elements="789" coveredelements="286" complexity="0" loc="501" ncloc="501" packages="18" files="59" classes="59"/>
     <package name="nextjs-clean-architecture">
       <metrics statements="14" coveredstatements="1" conditionals="6" coveredconditionals="0" methods="2" coveredmethods="0"/>
