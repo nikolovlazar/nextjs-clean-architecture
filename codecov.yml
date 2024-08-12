@@ -1,0 +1,18 @@
+comment:
+  layout: "diff, flags, files"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+  hide_project_coverage: false
+ignore:
+  - "app"
+  - "di"
+  - "drizzle"
+  - "test/coverage"
+  - ./*.mjs
+  - ./*.ts
+  - src/entities
+  - src/infrastructure/repositories/todos.repository.ts
+  - src/infrastructure/repositories/users.repository.ts
+  - src/infrastructure/services/authentication.service.ts
