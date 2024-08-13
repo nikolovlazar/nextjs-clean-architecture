@@ -1,4 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import { codecovWebpackPlugin } from "@codecov/webpack-plugin";
 import webpack from "webpack";
 
 /** @type {import('next').NextConfig} */
@@ -16,6 +17,13 @@ const nextConfig = {
         }),
       );
     }
+    config.plugins.push(
+      codecovWebpackPlugin({
+        enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+        bundleName: "nextjs-clean-architecture",
+        uploadToken: process.env.CODECOV_TOKEN,
+      }),
+    );
     return config;
   },
 };
