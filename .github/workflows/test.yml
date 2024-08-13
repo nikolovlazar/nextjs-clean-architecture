@@ -18,6 +18,7 @@ jobs:
         run: npm run build
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - name: Run tests with coverage
         run: npm run coverage
       - name: Upload coverage to Codecov
