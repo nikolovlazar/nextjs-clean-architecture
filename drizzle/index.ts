@@ -1,15 +1,14 @@
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 import { sessions, todos, users } from "./schema";
 
 // Setup sqlite database connection
-const sqlite = new Database(process.env.DATABASE_URL);
-export const db = drizzle(sqlite, { schema: { users, sessions, todos } });
-
-// Run migrations
-void migrate(db, { migrationsFolder: "./drizzle/migrations" });
+const client = createClient({
+  url: process.env.DATABASE_URL ?? "file://sqlite.db",
+  authToken: process.env.DATABASE_AUTH_TOKEN,
+});
+export const db = drizzle(client, { schema: { users, sessions, todos } });
 
 // Setup lucia adapter
 export const luciaAdapter = new DrizzleSQLiteAdapter(db, sessions, users);
