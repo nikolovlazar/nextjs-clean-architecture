@@ -5,7 +5,7 @@ import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { sessions, todos, users } from "./schema";
 
 // Setup sqlite database connection
-const sqlite = new Database("sqlite.db");
+const sqlite = new Database(process.env.DATABASE_URL);
 export const db = drizzle(sqlite, { schema: { users, sessions, todos } });
 
 // Run migrations
