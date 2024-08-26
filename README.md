@@ -77,6 +77,13 @@ Clean Architecture achieves this through defining a _dependency hierarchy_ - lay
 > If you have a question not covered by the FAQ, feel free to either [open an Issue](https://github.com/nikolovlazar/nextjs-clean-architecture/issues/new) in this repo, or join [my Discord server](https://creatures.sh) and start a conversation there.
 
 <details>
+  <summary><b>Is Clean Architecture / this implementation serverless-friendly? Can I deploy this to Vercel?</b></summary>
+
+There is a catch here - <b>You can't use the Edge runtime</b>. That means [Middleware](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes#use-cases) will not work. This is because of [inversify](https://inversify.io). Inversify only supports the Node runtime.
+
+</details>
+
+<details>
   <summary><b>Should I start implementing Clean Architecture immediately when I create my Next.js project?</b></summary>
 
 I'd say **no**. If you're starting a brand new project, I'd advise you to focus on achieving an MVP status as fast as possible (so you can validate your idea / see if there's a future for your project). When things start to get serious (more features start to get implemented, your user base experiences a significant growth, or you're onboarding other developers in your project), that's when you'd want to invest some time into adapting this architecture (or any architecture for that matter).
