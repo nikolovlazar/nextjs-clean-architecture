@@ -9,9 +9,6 @@ export default defineConfig({
       reportsDirectory: "./tests/coverage",
     },
   },
-  define: {
-    "process.env.NODE_ENV": JSON.stringify("test"),
-  },
   plugins: [env()],
   resolve: {
     alias: {
