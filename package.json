@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "test": "NODE_ENV=test vitest",
+    "coverage": "NODE_ENV=test vitest run --coverage"
   },
   "dependencies": {
     "@libsql/client": "^0.9.0",
