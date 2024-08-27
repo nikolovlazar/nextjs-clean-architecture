@@ -33,7 +33,7 @@ export class TodosRepository implements ITodosRepository {
           }
         } catch (err) {
           captureException(err, { data: todo });
-          throw err;
+          throw err; // TODO: convert to Entities error
         }
       },
     );
@@ -58,7 +58,7 @@ export class TodosRepository implements ITodosRepository {
         return todo;
       } catch (err) {
         captureException(err);
-        throw err;
+        throw err; // TODO: convert to Entities error
       }
     });
   }
@@ -83,7 +83,7 @@ export class TodosRepository implements ITodosRepository {
           return usersTodos;
         } catch (err) {
           captureException(err);
-          throw err;
+          throw err; // TODO: convert to Entities error
         }
       },
     );
@@ -111,7 +111,7 @@ export class TodosRepository implements ITodosRepository {
           return updated;
         } catch (err) {
           captureException(err);
-          throw err;
+          throw err; // TODO: convert to Entities error
         }
       },
     );

@@ -29,7 +29,7 @@ export class UsersRepository implements IUsersRepository {
         return user;
       } catch (err) {
         captureException(err);
-        throw err;
+        throw err; // TODO: convert to Entities error
       }
     });
   }
@@ -54,7 +54,7 @@ export class UsersRepository implements IUsersRepository {
           return user;
         } catch (err) {
           captureException(err);
-          throw err;
+          throw err; // TODO: convert to Entities error
         }
       },
     );
@@ -82,7 +82,7 @@ export class UsersRepository implements IUsersRepository {
           }
         } catch (err) {
           captureException(err);
-          throw err;
+          throw err; // TODO: convert to Entities error
         }
       },
     );
