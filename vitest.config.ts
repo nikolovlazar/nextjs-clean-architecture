@@ -8,6 +8,9 @@ export default defineConfig({
       provider: "istanbul",
       reportsDirectory: "./tests/coverage",
     },
+    env: {
+      NODE_ENV: "test",
+    },
   },
   plugins: [env()],
   resolve: {
