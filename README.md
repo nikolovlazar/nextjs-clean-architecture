@@ -1,6 +1,10 @@
 # Clean Architecture in Next.js
 
-This repo is an example of how to achieve Clean Architecture in Next.js. There's also going to be a video, so keep an eye [on my YouTube channel](https://youtube.com/@nikolovlazar). You can run the project just by running `npm install` and `npm run dev`.
+This repo is an example of how to achieve Clean Architecture in Next.js. There's a video tutorial that goes through this project. Click on the image to check it out on YouTube:
+
+[![Clean Architecture in Next.js](https://img.youtube.com/vi/jJVAla0dWJo/0.jpg)](https://www.youtube.com/watch?v=jJVAla0dWJo)
+
+You can run the project just by running `npm install` and `npm run dev`.
 
 ## Clean Architecture
 
