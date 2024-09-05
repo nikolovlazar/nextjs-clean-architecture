@@ -7,14 +7,14 @@ import { UnauthenticatedError } from "@/src/entities/errors/auth";
 import { InputParseError } from "@/src/entities/errors/common";
 import { Todo } from "@/src/entities/models/todo";
 
-function presenter(todo: Todo) {
+function presenter(todos: Todo[]) {
   return startSpan({ name: "createTodo Presenter", op: "serialize" }, () => {
-    return {
+    return todos.map((todo) => ({
       id: todo.id,
       todo: todo.todo,
       userId: todo.userId,
       completed: todo.completed,
-    };
+    }));
   });
 }
 
@@ -41,9 +41,12 @@ export async function createTodoController(
         throw new InputParseError("Invalid data", { cause: inputParseError });
       }
 
-      const todo = await createTodoUseCase(data, user.id);
+      const todosFromInput = data.todo.split(",").map((t) => t.trim());
+      const todos = await Promise.all(
+        todosFromInput.map((t) => createTodoUseCase({ todo: t }, user.id)),
+      );
 
-      return presenter(todo);
+      return presenter(todos);
     },
   );
 }

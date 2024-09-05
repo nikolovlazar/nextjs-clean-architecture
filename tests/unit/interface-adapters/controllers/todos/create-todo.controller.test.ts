@@ -25,11 +25,50 @@ it("creates todo", async () => {
 
   expect(
     createTodoController({ todo: "Test application" }, session.id),
-  ).resolves.toMatchObject({
-    todo: "Test application",
-    completed: false,
-    userId: "1",
+  ).resolves.toMatchObject([
+    {
+      todo: "Test application",
+      completed: false,
+      userId: "1",
+    },
+  ]);
+});
+
+it("creates multiple comma-separated todos", async () => {
+  const { session } = await signInUseCase({
+    username: "one",
+    password: "password-one",
   });
+
+  expect(
+    createTodoController(
+      {
+        todo: "Test application, Do something else, Take out trash, Achieve Atomic Repositories",
+      },
+      session.id,
+    ),
+  ).resolves.toMatchObject([
+    {
+      todo: "Test application",
+      completed: false,
+      userId: "1",
+    },
+    {
+      todo: "Do something else",
+      completed: false,
+      userId: "1",
+    },
+    {
+      todo: "Take out trash",
+      completed: false,
+      userId: "1",
+    },
+    {
+      todo: "Achieve Atomic Repositories",
+      completed: false,
+      userId: "1",
+    },
+  ]);
 });
 
 it("throws for invalid input", async () => {

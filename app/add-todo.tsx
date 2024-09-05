@@ -21,7 +21,7 @@ export function CreateTodo() {
       if (res.error) {
         toast.error(res.error);
       } else if (res.success) {
-        toast.success("Todo created!");
+        toast.success("Todo(s) created!");
 
         if (inputRef.current) {
           inputRef.current.value = "";
