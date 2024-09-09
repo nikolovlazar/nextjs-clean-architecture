@@ -17,13 +17,14 @@ export const db = drizzle(client, { schema: { users, sessions, todos } });
 export const luciaAdapter = new DrizzleSQLiteAdapter(db, sessions, users);
 
 // Export Transaction type to be used in repositories
+type Schema = {
+  users: typeof users;
+  sessions: typeof sessions;
+  todos: typeof todos;
+};
 export type Transaction = SQLiteTransaction<
   "async",
   ResultSet,
-  { users: typeof users; sessions: typeof sessions; todos: typeof todos },
-  ExtractTablesWithRelations<{
-    users: typeof users;
-    sessions: typeof sessions;
-    todos: typeof todos;
-  }>
+  Schema,
+  ExtractTablesWithRelations<Schema>
 >;
