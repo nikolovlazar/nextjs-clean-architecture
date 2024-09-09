@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { injectable } from "inversify";
 import { startSpan, captureException } from "@sentry/nextjs";
 
-import { db } from "@/drizzle";
+import { db, Transaction } from "@/drizzle";
 import { todos } from "@/drizzle/schema";
 import { ITodosRepository } from "@/src/application/repositories/todos.repository.interface";
 import { DatabaseOperationError } from "@/src/entities/errors/common";
@@ -10,12 +10,14 @@ import { TodoInsert, Todo } from "@/src/entities/models/todo";
 
 @injectable()
 export class TodosRepository implements ITodosRepository {
-  async createTodo(todo: TodoInsert): Promise<Todo> {
+  async createTodo(todo: TodoInsert, tx?: Transaction): Promise<Todo> {
+    const invoker = tx ?? db;
+
     return await startSpan(
       { name: "TodosRepository > createTodo" },
       async () => {
         try {
-          const query = db.insert(todos).values(todo).returning();
+          const query = invoker.insert(todos).values(todo).returning();
 
           const [created] = await startSpan(
             {

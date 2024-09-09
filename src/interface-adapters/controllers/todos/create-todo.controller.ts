@@ -4,7 +4,10 @@ import { startSpan } from "@sentry/nextjs";
 import { getInjection } from "@/di/container";
 import { createTodoUseCase } from "@/src/application/use-cases/todos/create-todo.use-case";
 import { UnauthenticatedError } from "@/src/entities/errors/auth";
-import { InputParseError } from "@/src/entities/errors/common";
+import {
+  DatabaseOperationError,
+  InputParseError,
+} from "@/src/entities/errors/common";
 import { Todo } from "@/src/entities/models/todo";
 
 function presenter(todos: Todo[]) {
@@ -42,11 +45,26 @@ export async function createTodoController(
       }
 
       const todosFromInput = data.todo.split(",").map((t) => t.trim());
-      const todos = await Promise.all(
-        todosFromInput.map((t) => createTodoUseCase({ todo: t }, user.id)),
-      );
 
-      return presenter(todos);
+      const transactionManagerService = getInjection(
+        "ITransactionManagerService",
+      );
+      const todos = await startSpan({ name: "Create Todo Transaction" }, () =>
+        transactionManagerService.startTransaction(async (tx) => {
+          try {
+            return await Promise.all(
+              todosFromInput.map((t) =>
+                createTodoUseCase({ todo: t }, user.id, tx),
+              ),
+            );
+          } catch (err) {
+            console.error("Rolling back!");
+            tx.rollback();
+          }
+        }),
+      );
+      if (todos) return presenter(todos);
+      else throw new DatabaseOperationError("Oops");
     },
   );
 }
