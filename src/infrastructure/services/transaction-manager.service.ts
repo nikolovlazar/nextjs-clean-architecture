@@ -5,9 +5,11 @@ import { ITransactionManagerService } from "@/src/application/services/transacti
 
 @injectable()
 export class TransactionManagerService implements ITransactionManagerService {
-  public startTransaction(
-    clb: (tx: Transaction) => Promise<any>,
-  ): Promise<any> | undefined {
-    return db.transaction(clb);
+  public startTransaction<T>(
+    clb: (tx: Transaction) => Promise<T>,
+    parent?: Transaction,
+  ): Promise<T> {
+    const invoker = parent ?? db;
+    return invoker.transaction(clb);
   }
 }
