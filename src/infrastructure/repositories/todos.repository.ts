@@ -118,4 +118,26 @@ export class TodosRepository implements ITodosRepository {
       },
     );
   }
+
+  async deleteTodo(id: number, tx?: any): Promise<void> {
+    const invoker = tx ?? db;
+
+    await startSpan({ name: "TodosRepository > deleteTodo" }, async () => {
+      try {
+        const query = invoker.delete(todos).where(eq(todos.id, id)).returning();
+
+        await startSpan(
+          {
+            name: query.toSQL().sql,
+            op: "db.query",
+            attributes: { "db.system": "sqlite" },
+          },
+          () => query.execute(),
+        );
+      } catch (err) {
+        captureException(err);
+        throw err; // TODO: convert to Entities error
+      }
+    });
+  }
 }

@@ -6,7 +6,7 @@ import { NotFoundError } from "@/src/entities/errors/common";
 import type { Todo } from "@/src/entities/models/todo";
 import { ITransaction } from "@/src/application/services/transaction-manager.service.interface";
 
-export function toggleTodoUseCase(
+export function deleteTodoUseCase(
   input: {
     todoId: number;
   },
@@ -14,7 +14,7 @@ export function toggleTodoUseCase(
   tx?: ITransaction,
 ): Promise<Todo> {
   return startSpan(
-    { name: "toggleTodo Use Case", op: "function" },
+    { name: "deleteTodo Use Case", op: "function" },
     async () => {
       const todosRepository = getInjection("ITodosRepository");
 
@@ -25,18 +25,12 @@ export function toggleTodoUseCase(
       }
 
       if (todo.userId !== userId) {
-        throw new UnauthorizedError("Cannot toggle todo. Reason: unauthorized");
+        throw new UnauthorizedError("Cannot delete todo. Reason: unauthorized");
       }
 
-      const updatedTodo = await todosRepository.updateTodo(
-        todo.id,
-        {
-          completed: !todo.completed,
-        },
-        tx,
-      );
+      await todosRepository.deleteTodo(todo.id, tx);
 
-      return updatedTodo;
+      return todo;
     },
   );
 }

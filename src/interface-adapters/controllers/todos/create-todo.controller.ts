@@ -24,7 +24,7 @@ function presenter(todos: Todo[]) {
 const inputSchema = z.object({ todo: z.string().min(1) });
 
 export async function createTodoController(
-  input: any,
+  input: Partial<z.infer<typeof inputSchema>>,
   sessionId: string | undefined,
 ): Promise<ReturnType<typeof presenter>> {
   return await startSpan(

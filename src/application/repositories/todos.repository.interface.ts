@@ -5,4 +5,5 @@ export interface ITodosRepository {
   getTodo(id: number): Promise<Todo | undefined>;
   getTodosForUser(userId: string): Promise<Todo[]>;
   updateTodo(id: number, input: Partial<TodoInsert>, tx?: any): Promise<Todo>;
+  deleteTodo(id: number, tx?: any): Promise<void>;
 }
