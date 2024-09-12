@@ -53,7 +53,6 @@ export async function bulkUpdateController(
             } catch (err) {
               console.error("Rolling back toggles!");
               mainTx.rollback();
-              throw err;
             }
 
             // Create a savepoint to avoid rolling back toggles if deletes fail
@@ -68,7 +67,6 @@ export async function bulkUpdateController(
                 } catch (err) {
                   console.error("Rolling back deletes!");
                   deleteTx.rollback();
-                  throw err;
                 }
               },
               mainTx,
