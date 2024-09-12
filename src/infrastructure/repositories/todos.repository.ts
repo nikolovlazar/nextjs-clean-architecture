@@ -119,7 +119,7 @@ export class TodosRepository implements ITodosRepository {
     );
   }
 
-  async deleteTodo(id: number, tx?: any): Promise<void> {
+  async deleteTodo(id: number, tx?: Transaction): Promise<void> {
     const invoker = tx ?? db;
 
     await startSpan({ name: "TodosRepository > deleteTodo" }, async () => {
