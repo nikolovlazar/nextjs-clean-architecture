@@ -56,6 +56,7 @@ export async function bulkUpdateController(
               throw err;
             }
 
+            // Create a savepoint to avoid rolling back toggles if deletes fail
             await transactionManagerService.startTransaction(
               async (deleteTx) => {
                 try {
