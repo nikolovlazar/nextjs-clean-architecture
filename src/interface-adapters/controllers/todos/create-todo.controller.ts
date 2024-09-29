@@ -7,21 +7,21 @@ import { UnauthenticatedError } from "@/src/entities/errors/auth";
 import { InputParseError } from "@/src/entities/errors/common";
 import { Todo } from "@/src/entities/models/todo";
 
-function presenter(todo: Todo) {
+function presenter(todos: Todo[]) {
   return startSpan({ name: "createTodo Presenter", op: "serialize" }, () => {
-    return {
+    return todos.map((todo) => ({
       id: todo.id,
       todo: todo.todo,
       userId: todo.userId,
       completed: todo.completed,
-    };
+    }));
   });
 }
 
 const inputSchema = z.object({ todo: z.string().min(1) });
 
 export async function createTodoController(
-  input: any,
+  input: Partial<z.infer<typeof inputSchema>>,
   sessionId: string | undefined,
 ): Promise<ReturnType<typeof presenter>> {
   return await startSpan(
@@ -41,9 +41,26 @@ export async function createTodoController(
         throw new InputParseError("Invalid data", { cause: inputParseError });
       }
 
-      const todo = await createTodoUseCase(data, user.id);
+      const todosFromInput = data.todo.split(",").map((t) => t.trim());
 
-      return presenter(todo);
+      const transactionManagerService = getInjection(
+        "ITransactionManagerService",
+      );
+      const todos = await startSpan({ name: "Create Todo Transaction" }, () =>
+        transactionManagerService.startTransaction(async (tx) => {
+          try {
+            return await Promise.all(
+              todosFromInput.map((t) =>
+                createTodoUseCase({ todo: t }, user.id, tx),
+              ),
+            );
+          } catch (err) {
+            console.error("Rolling back!");
+            tx.rollback();
+          }
+        }),
+      );
+      return presenter(todos ?? []);
     },
   );
 }

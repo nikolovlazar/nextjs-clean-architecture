@@ -1,10 +1,11 @@
-import { Container } from "inversify";
 import { startSpan } from "@sentry/nextjs";
+import { Container } from "inversify";
 
 import { AuthenticationModule } from "./modules/authentication.module";
+import { DatabaseModule } from "./modules/database.module";
 import { TodosModule } from "./modules/todos.module";
-import { DI_RETURN_TYPES, DI_SYMBOLS } from "./types";
 import { UsersModule } from "./modules/users.module";
+import { DI_RETURN_TYPES, DI_SYMBOLS } from "./types";
 
 const ApplicationContainer = new Container({
   defaultScope: "Singleton",
@@ -14,9 +15,11 @@ export const initializeContainer = () => {
   ApplicationContainer.load(TodosModule);
   ApplicationContainer.load(UsersModule);
   ApplicationContainer.load(AuthenticationModule);
+  ApplicationContainer.load(DatabaseModule);
 };
 
 export const destroyContainer = () => {
+  ApplicationContainer.unload(DatabaseModule);
   ApplicationContainer.unload(AuthenticationModule);
   ApplicationContainer.unload(UsersModule);
   ApplicationContainer.unload(TodosModule);

@@ -37,4 +37,12 @@ export class MockTodosRepository implements ITodosRepository {
     this._todos[existingIndex] = updated;
     return updated;
   }
+
+  async deleteTodo(id: number): Promise<void> {
+    const existingIndex = this._todos.findIndex((t) => t.id === id);
+    if (existingIndex > -1) {
+      delete this._todos[existingIndex];
+      this._todos = this._todos.filter(Boolean);
+    }
+  }
 }

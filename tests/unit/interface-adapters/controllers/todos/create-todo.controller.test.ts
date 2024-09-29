@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { afterEach, beforeEach, expect, it } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 import { destroyContainer, initializeContainer } from "@/di/container";
 import { signInUseCase } from "@/src/application/use-cases/auth/sign-in.use-case";
@@ -25,11 +25,71 @@ it("creates todo", async () => {
 
   expect(
     createTodoController({ todo: "Test application" }, session.id),
-  ).resolves.toMatchObject({
-    todo: "Test application",
-    completed: false,
-    userId: "1",
+  ).resolves.toMatchObject([
+    {
+      todo: "Test application",
+      completed: false,
+      userId: "1",
+    },
+  ]);
+});
+
+it("creates multiple comma-separated todos", async () => {
+  const { session } = await signInUseCase({
+    username: "one",
+    password: "password-one",
   });
+
+  expect(
+    createTodoController(
+      {
+        todo: "Test application, Do something else, Take out trash, Achieve Atomic Repositories",
+      },
+      session.id,
+    ),
+  ).resolves.toMatchObject([
+    {
+      todo: "Test application",
+      completed: false,
+      userId: "1",
+    },
+    {
+      todo: "Do something else",
+      completed: false,
+      userId: "1",
+    },
+    {
+      todo: "Take out trash",
+      completed: false,
+      userId: "1",
+    },
+    {
+      todo: "Achieve Atomic Repositories",
+      completed: false,
+      userId: "1",
+    },
+  ]);
+});
+
+it("rolls back when error happens", async () => {
+  const { session } = await signInUseCase({
+    username: "one",
+    password: "password-one",
+  });
+
+  const consoleErrorSpy = vi
+    .spyOn(console, "error")
+    .mockImplementation(() => {});
+
+  await createTodoController(
+    { todo: "Testing rollbacks, One, Should rollback, Two" },
+    session.id,
+  );
+
+  expect(consoleErrorSpy).toHaveBeenLastCalledWith("Rolling back!");
+
+  consoleErrorSpy.mockRestore();
+  vi.restoreAllMocks();
 });
 
 it("throws for invalid input", async () => {
