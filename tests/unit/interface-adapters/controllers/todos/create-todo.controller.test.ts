@@ -69,6 +69,10 @@ it("creates multiple comma-separated todos", async () => {
       userId: "1",
     },
   ]);
+
+  expect(
+    createTodoController({ todo: "One" }, session.id),
+  ).rejects.toBeInstanceOf(InputParseError);
 });
 
 it("throws for invalid input", async () => {
@@ -84,6 +88,10 @@ it("throws for invalid input", async () => {
   expect(createTodoController({ todo: "" }, session.id)).rejects.toBeInstanceOf(
     InputParseError,
   );
+
+  expect(
+    createTodoController({ todo: "one" }, session.id),
+  ).rejects.toBeInstanceOf(InputParseError);
 });
 
 it("throws for unauthenticated", () => {

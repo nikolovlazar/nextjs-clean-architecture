@@ -66,14 +66,17 @@ it("throws for invalid input", async () => {
   expect(bulkUpdateController(undefined, session.id)).rejects.toBeInstanceOf(
     InputParseError,
   );
+
   // @ts-ignore
   expect(bulkUpdateController({}, session.id)).rejects.toBeInstanceOf(
     InputParseError,
   );
+
   expect(
     // @ts-ignore
     bulkUpdateController({ dirty: [] }, session.id),
   ).rejects.toBeInstanceOf(InputParseError);
+
   expect(
     // @ts-ignore
     bulkUpdateController({ deleted: [] }, session.id),

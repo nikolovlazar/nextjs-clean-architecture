@@ -60,11 +60,11 @@ export async function createTodoController(
           } catch (err) {
             console.error("Rolling back!");
             tx.rollback();
+            throw err;
           }
         }),
       );
-      if (todos) return presenter(todos);
-      else throw new DatabaseOperationError("Oops");
+      return presenter(todos);
     },
   );
 }
