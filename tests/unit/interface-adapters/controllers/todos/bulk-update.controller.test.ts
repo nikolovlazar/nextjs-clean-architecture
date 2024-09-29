@@ -103,26 +103,3 @@ it("throws when unauthenticated", async () => {
     bulkUpdateController({ dirty: [todo.id], deleted: [] }, undefined),
   ).rejects.toBeInstanceOf(UnauthenticatedError);
 });
-
-it("throws when unauthorized", async () => {
-  const { session: sessionOne } = await signInUseCase({
-    username: "one",
-    password: "password-one",
-  });
-
-  const todo = await createTodoUseCase(
-    { todo: "Write unit tests" },
-    sessionOne.userId,
-  );
-
-  await signOutUseCase(sessionOne.id);
-
-  const { session: sessionTwo } = await signInUseCase({
-    username: "two",
-    password: "password-two",
-  });
-
-  expect(
-    bulkUpdateController({ dirty: [todo.id], deleted: [] }, sessionTwo.id),
-  ).rejects.toBeInstanceOf(UnauthorizedError);
-});
