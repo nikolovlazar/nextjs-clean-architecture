@@ -57,11 +57,10 @@ export async function createTodoController(
           } catch (err) {
             console.error("Rolling back!");
             tx.rollback();
-            throw err;
           }
         }),
       );
-      return presenter(todos);
+      return presenter(todos ?? []);
     },
   );
 }

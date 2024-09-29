@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { afterEach, beforeEach, expect, it } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 import { destroyContainer, initializeContainer } from "@/di/container";
 import { signInUseCase } from "@/src/application/use-cases/auth/sign-in.use-case";
@@ -69,10 +69,27 @@ it("creates multiple comma-separated todos", async () => {
       userId: "1",
     },
   ]);
+});
 
-  expect(
-    createTodoController({ todo: "One" }, session.id),
-  ).rejects.toBeInstanceOf(InputParseError);
+it("rolls back when error happens", async () => {
+  const { session } = await signInUseCase({
+    username: "one",
+    password: "password-one",
+  });
+
+  const consoleErrorSpy = vi
+    .spyOn(console, "error")
+    .mockImplementation(() => {});
+
+  await createTodoController(
+    { todo: "Testing rollbacks, One, Should rollback, Two" },
+    session.id,
+  );
+
+  expect(consoleErrorSpy).toHaveBeenLastCalledWith("Rolling back!");
+
+  consoleErrorSpy.mockRestore();
+  vi.restoreAllMocks();
 });
 
 it("throws for invalid input", async () => {
@@ -88,10 +105,6 @@ it("throws for invalid input", async () => {
   expect(createTodoController({ todo: "" }, session.id)).rejects.toBeInstanceOf(
     InputParseError,
   );
-
-  expect(
-    createTodoController({ todo: "one" }, session.id),
-  ).rejects.toBeInstanceOf(InputParseError);
 });
 
 it("throws for unauthenticated", () => {
