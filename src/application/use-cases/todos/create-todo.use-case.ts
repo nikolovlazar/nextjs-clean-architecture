@@ -2,7 +2,6 @@ import { startSpan } from "@sentry/nextjs";
 
 import { getInjection } from "@/di/container";
 import type { Todo } from "@/src/entities/models/todo";
-import { InputParseError } from "@/src/entities/errors/common";
 
 export function createTodoUseCase(
   input: {
@@ -18,9 +17,11 @@ export function createTodoUseCase(
 
       // HINT: this is where you'd do authorization checks - is this user authorized to create a todo
       // for example: free users are allowed only 5 todos, throw an UnauthorizedError if more than 5
-      if (input.todo.length < 4) {
-        throw new InputParseError("Todo must be at least 4 chars");
-      }
+
+      // Uncomment these lines to test the transactions feature (atomic repositories video)
+      // if (input.todo.length < 4) {
+      //   throw new InputParseError("Todo must be at least 4 chars");
+      // }
 
       const newTodo = await todosRepository.createTodo(
         {
