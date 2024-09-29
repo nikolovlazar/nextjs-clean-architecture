@@ -13,6 +13,5 @@ ignore:
   - ./*.mjs
   - ./*.ts
   - src/entities
-  - src/infrastructure/repositories/todos.repository.ts
-  - src/infrastructure/repositories/users.repository.ts
-  - src/infrastructure/services/authentication.service.ts
+  - src/infrastructure/repositories/*.ts
+  - src/infrastructure/services/*.ts
