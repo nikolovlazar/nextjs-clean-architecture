@@ -4,10 +4,7 @@ import { startSpan } from "@sentry/nextjs";
 import { getInjection } from "@/di/container";
 import { createTodoUseCase } from "@/src/application/use-cases/todos/create-todo.use-case";
 import { UnauthenticatedError } from "@/src/entities/errors/auth";
-import {
-  DatabaseOperationError,
-  InputParseError,
-} from "@/src/entities/errors/common";
+import { InputParseError } from "@/src/entities/errors/common";
 import { Todo } from "@/src/entities/models/todo";
 
 function presenter(todos: Todo[]) {

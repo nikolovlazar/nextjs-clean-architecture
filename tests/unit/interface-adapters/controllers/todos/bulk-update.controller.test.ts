@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { afterEach, beforeEach, expect, it } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 import { destroyContainer, initializeContainer } from "@/di/container";
 import { signInUseCase } from "@/src/application/use-cases/auth/sign-in.use-case";
@@ -81,6 +81,55 @@ it("throws for invalid input", async () => {
     // @ts-ignore
     bulkUpdateController({ deleted: [] }, session.id),
   ).rejects.toBeInstanceOf(InputParseError);
+});
+
+it("rolls back when an error happens", async () => {
+  const { session } = await signInUseCase({
+    username: "one",
+    password: "password-one",
+  });
+
+  const todoOne = await createTodoUseCase(
+    { todo: "Write unit tests" },
+    session.userId,
+  );
+  const todoTwo = await createTodoUseCase(
+    { todo: "Bulk update" },
+    session.userId,
+  );
+  const todoThree = await createTodoUseCase(
+    { todo: "Improve DX" },
+    session.userId,
+  );
+
+  const consoleErrorSpy = vi
+    .spyOn(console, "error")
+    .mockImplementation(() => {});
+
+  // Delete the 1st and 3rd before attempting to update them
+  await bulkUpdateController(
+    { dirty: [], deleted: [todoOne.id, todoThree.id] },
+    session.id,
+  );
+
+  // Invoke the bulk update with the deleted todos
+  await bulkUpdateController(
+    { dirty: [todoOne.id, todoTwo.id, todoThree.id], deleted: [] },
+    session.id,
+  );
+
+  expect(consoleErrorSpy).toHaveBeenLastCalledWith("Rolling back toggles!");
+
+  // Invoke the bulk update with the deleted todos
+  await bulkUpdateController(
+    { deleted: [todoOne.id, todoTwo.id, todoThree.id], dirty: [] },
+    session.id,
+  );
+
+  expect(consoleErrorSpy).toHaveBeenLastCalledWith("Rolling back deletes!");
+
+  consoleErrorSpy.mockRestore();
+  vi.restoreAllMocks();
 });
 
 it("throws when unauthenticated", async () => {
