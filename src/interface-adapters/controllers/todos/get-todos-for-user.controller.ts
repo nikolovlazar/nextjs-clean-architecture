@@ -5,18 +5,23 @@ import { getTodosForUserUseCase } from "@/src/application/use-cases/todos/get-to
 import { UnauthenticatedError } from "@/src/entities/errors/auth";
 import { Todo } from "@/src/entities/models/todo";
 
-function presenter(todos: Todo[]) {
-  return startSpan({ name: "getTodosForUser Presenter", op: "serialize" }, () =>
-    todos.map((t) => ({
-      id: t.id,
-      todo: t.todo,
-      userId: t.userId,
-      completed: t.completed,
-    })),
+function presenter(todos: Todo[], pages: number) {
+  return startSpan(
+    { name: "getTodosForUser Presenter", op: "serialize" },
+    () => ({
+      todos: todos.map((t) => ({
+        id: t.id,
+        todo: t.todo,
+        userId: t.userId,
+        completed: t.completed,
+      })),
+      pages,
+    }),
   );
 }
 
 export async function getTodosForUserController(
+  page: number,
   sessionId: string | undefined,
 ): Promise<ReturnType<typeof presenter>> {
   return await startSpan({ name: "getTodosForUser Controller" }, async () => {
@@ -27,8 +32,8 @@ export async function getTodosForUserController(
     const authenticationService = getInjection("IAuthenticationService");
     const { session } = await authenticationService.validateSession(sessionId);
 
-    const todos = await getTodosForUserUseCase(session.userId);
+    const { todos, pages } = await getTodosForUserUseCase(page, session.userId);
 
-    return presenter(todos);
+    return presenter(todos, pages);
   });
 }

@@ -1,17 +1,26 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import { Trash } from "lucide-react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
+import { Button } from "./_components/ui/button";
 import { Checkbox } from "./_components/ui/checkbox";
+import { AutoPagination } from "./_components/ui/pagination";
 import { cn } from "./_components/utils";
 import { bulkUpdate, toggleTodo } from "./actions";
-import { Button } from "./_components/ui/button";
 
 type Todo = { id: number; todo: string; userId: string; completed: boolean };
 
-export function Todos({ todos }: { todos: Todo[] }) {
+export function Todos({
+  todos,
+  pages,
+  page,
+}: {
+  todos: Todo[];
+  pages: number;
+  page: number;
+}) {
   const [bulkMode, setBulkMode] = useState(false);
   const [dirty, setDirty] = useState<number[]>([]);
   const [deleted, setDeleted] = useState<number[]>([]);
@@ -124,6 +133,7 @@ export function Todos({ todos }: { todos: Todo[] }) {
           <p>No todos. Create some to get started!</p>
         )}
       </ul>
+      <AutoPagination pages={pages} page={page} />
       {bulkMode ? (
         <div className="w-full grid grid-cols-2 gap-2">
           <Button onClick={updateAll}>Update all</Button>

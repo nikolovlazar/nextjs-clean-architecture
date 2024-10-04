@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { injectable } from "inversify";
 import { startSpan, captureException } from "@sentry/nextjs";
 
@@ -7,6 +7,7 @@ import { todos } from "@/drizzle/schema";
 import { ITodosRepository } from "@/src/application/repositories/todos.repository.interface";
 import { DatabaseOperationError } from "@/src/entities/errors/common";
 import { TodoInsert, Todo } from "@/src/entities/models/todo";
+import { TODOS_PER_PAGE } from "@/config";
 
 @injectable()
 export class TodosRepository implements ITodosRepository {
@@ -65,24 +66,50 @@ export class TodosRepository implements ITodosRepository {
     });
   }
 
-  async getTodosForUser(userId: string): Promise<Todo[]> {
+  async getTodosForUser(
+    page: number,
+    userId: string,
+  ): Promise<{ todos: Todo[]; count: number }> {
     return await startSpan(
       { name: "TodosRepository > getTodosForUser" },
       async () => {
         try {
-          const query = db.query.todos.findMany({
-            where: eq(todos.userId, userId),
-          });
+          const countQuery = db
+            .select({
+              count: count(),
+            })
+            .from(todos)
+            .where(eq(todos.userId, userId))
+            .$dynamic();
 
-          const usersTodos = await startSpan(
+          const countPromise = startSpan(
             {
-              name: query.toSQL().sql,
+              name: countQuery.toSQL().sql,
               op: "db.query",
               attributes: { "db.system": "sqlite" },
             },
-            () => query.execute(),
+            () => countQuery.execute(),
           );
-          return usersTodos;
+
+          const todosQuery = db.query.todos.findMany({
+            where: eq(todos.userId, userId),
+            offset: (page - 1) * TODOS_PER_PAGE,
+            limit: TODOS_PER_PAGE,
+          });
+
+          const todosPromise = startSpan(
+            {
+              name: todosQuery.toSQL().sql,
+              op: "db.query",
+              attributes: { "db.system": "sqlite" },
+            },
+            () => todosQuery.execute(),
+          );
+          const [todosCount, usersTodos] = await Promise.all([
+            countPromise,
+            todosPromise,
+          ]);
+          return { todos: usersTodos, count: todosCount[0].count };
         } catch (err) {
           captureException(err);
           throw err; // TODO: convert to Entities error

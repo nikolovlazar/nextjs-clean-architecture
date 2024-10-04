@@ -2,6 +2,7 @@ import { injectable } from "inversify";
 
 import { ITodosRepository } from "@/src/application/repositories/todos.repository.interface";
 import { Todo, TodoInsert } from "@/src/entities/models/todo";
+import { TODOS_PER_PAGE } from "@/config";
 
 @injectable()
 export class MockTodosRepository implements ITodosRepository {
@@ -23,9 +24,17 @@ export class MockTodosRepository implements ITodosRepository {
     return todo;
   }
 
-  async getTodosForUser(userId: string): Promise<Todo[]> {
+  async getTodosForUser(
+    page: number,
+    userId: string,
+  ): Promise<{ todos: Todo[]; count: number }> {
     const usersTodos = this._todos.filter((t) => t.userId === userId);
-    return usersTodos;
+    const todos = usersTodos.slice(
+      page * TODOS_PER_PAGE,
+      page * TODOS_PER_PAGE + TODOS_PER_PAGE,
+    );
+    const count = usersTodos.length;
+    return { todos, count };
   }
 
   async updateTodo(id: number, input: Partial<TodoInsert>): Promise<Todo> {

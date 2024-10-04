@@ -20,7 +20,7 @@ import { UserMenu } from "./_components/ui/user-menu";
 import { CreateTodo } from "./add-todo";
 import { Todos } from "./todos";
 
-async function getTodos(sessionId: string | undefined) {
+async function getTodos(page: number, sessionId: string | undefined) {
   return await startSpan(
     {
       name: "getTodos",
@@ -28,7 +28,7 @@ async function getTodos(sessionId: string | undefined) {
     },
     async () => {
       try {
-        return await getTodosForUserController(sessionId);
+        return await getTodosForUserController(page, sessionId);
       } catch (err) {
         if (
           err instanceof UnauthenticatedError ||
@@ -43,14 +43,26 @@ async function getTodos(sessionId: string | undefined) {
   );
 }
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Record<string, string>;
+}) {
   const sessionId = cookies().get(SESSION_COOKIE)?.value;
+  const page = searchParams.page ? parseInt(searchParams.page) : 1;
 
   let todos: Todo[];
+  let pages: number = 1;
   try {
-    todos = await getTodos(sessionId);
+    const res = await getTodos(page, sessionId);
+    todos = res.todos;
+    pages = res.pages;
   } catch (err) {
     throw err;
+  }
+
+  if (page > pages) {
+    redirect(`?page=${pages}`);
   }
 
   return (
@@ -62,7 +74,7 @@ export default async function Home() {
       <Separator />
       <CardContent className="flex flex-col p-6 gap-4">
         <CreateTodo />
-        <Todos todos={todos} />
+        <Todos todos={todos} pages={pages} page={page} />
       </CardContent>
     </Card>
   );
