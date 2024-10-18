@@ -83,7 +83,7 @@ Clean Architecture achieves this through defining a _dependency hierarchy_ - lay
 <details>
   <summary><b>Is Clean Architecture / this implementation serverless-friendly? Can I deploy this to Vercel?</b></summary>
 
-There is a catch here - <b>You can't use the Edge runtime</b>. That means [Middleware](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes#use-cases) will not work. This is because of [inversify](https://inversify.io). Inversify only supports the Node runtime.
+There is a catch here - <b>You can't use the Edge runtime</b>. That means [Middleware](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes#use-cases) will not work. This is because of [inversify](https://inversify.io). Inversify only supports the Node runtime. There is a different library called [typed-inject](https://www.npmjs.com/package/typed-inject) that does not use reflection, so you should be able to use it in the middleware, but I haven't tried it yet.
 
 </details>
 
