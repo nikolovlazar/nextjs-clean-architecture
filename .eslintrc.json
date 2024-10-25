@@ -6,6 +6,16 @@
     "boundaries/elements": [
       {
         "mode": "full",
+        "type": "web",
+        "pattern": ["app/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "interface-adapters",
+        "pattern": ["src/interface-adapters/**/*"]
+      },
+      {
+        "mode": "full",
         "type": "use-cases",
         "pattern": ["src/application/use-cases/**/*"]
       },
@@ -21,23 +31,13 @@
       },
       {
         "mode": "full",
-        "type": "infrastructure",
-        "pattern": ["src/infrastructure/**/*"]
-      },
-      {
-        "mode": "full",
-        "type": "interface-adapters",
-        "pattern": ["src/interface-adapters/**/*"]
-      },
-      {
-        "mode": "full",
         "type": "entities",
         "pattern": ["src/entities/**/*"]
       },
       {
         "mode": "full",
-        "type": "web",
-        "pattern": ["app/**/*"]
+        "type": "infrastructure",
+        "pattern": ["src/infrastructure/**/*"]
       }
     ]
   },
