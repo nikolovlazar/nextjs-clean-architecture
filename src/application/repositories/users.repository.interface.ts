@@ -1,5 +1,5 @@
-import type { User } from "@/src/entities/models/user";
-import { ITransaction } from "@/src/application/services/transaction-manager.service.interface";
+import type { User } from '@/src/entities/models/user';
+import type { ITransaction } from '@/src/entities/models/transaction.interface';
 
 export interface IUsersRepository {
   getUser(id: string): Promise<User | undefined>;

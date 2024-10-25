@@ -1,3 +1,84 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals"],
+  "plugins": ["boundaries"],
+  "settings": {
+    "boundaries/include": ["src/**/*", "app/**/*"],
+    "boundaries/elements": [
+      {
+        "mode": "full",
+        "type": "web",
+        "pattern": ["app/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "interface-adapters",
+        "pattern": ["src/interface-adapters/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "use-cases",
+        "pattern": ["src/application/use-cases/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "service-interfaces",
+        "pattern": ["src/application/services/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "repository-interfaces",
+        "pattern": ["src/application/repositories/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "entities",
+        "pattern": ["src/entities/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "infrastructure",
+        "pattern": ["src/infrastructure/**/*"]
+      }
+    ]
+  },
+  "rules": {
+    "boundaries/no-unknown": "error",
+    "boundaries/no-unknown-files": "error",
+    "boundaries/element-types": [
+      "error",
+      {
+        "default": "disallow",
+        "rules": [
+          {
+            "from": "web",
+            "allow": ["web", "interface-adapters", "entities"]
+          },
+          {
+            "from": "interface-adapters",
+            "allow": ["use-cases", "entities"]
+          },
+          {
+            "from": "infrastructure",
+            "allow": ["service-interfaces", "repository-interfaces", "entities"]
+          },
+          {
+            "from": "use-cases",
+            "allow": ["entities"]
+          },
+          {
+            "from": "service-interfaces",
+            "allow": ["entities"]
+          },
+          {
+            "from": "repository-interfaces",
+            "allow": ["entities"]
+          },
+          {
+            "from": "entities",
+            "allow": ["entities"]
+          }
+        ]
+      }
+    ]
+  }
 }

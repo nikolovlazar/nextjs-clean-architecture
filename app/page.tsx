@@ -1,30 +1,31 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { captureException, startSpan } from "@sentry/nextjs";
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import { SESSION_COOKIE } from "@/config";
+import { SESSION_COOKIE } from '@/config';
+import { getInjection } from '@/di/container';
 import {
   AuthenticationError,
   UnauthenticatedError,
-} from "@/src/entities/errors/auth";
-import { Todo } from "@/src/entities/models/todo";
-import { getTodosForUserController } from "@/src/interface-adapters/controllers/todos/get-todos-for-user.controller";
+} from '@/src/entities/errors/auth';
+import { Todo } from '@/src/entities/models/todo';
+import { getTodosForUserController } from '@/src/interface-adapters/controllers/todos/get-todos-for-user.controller';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "./_components/ui/card";
-import { Separator } from "./_components/ui/separator";
-import { UserMenu } from "./_components/ui/user-menu";
-import { CreateTodo } from "./add-todo";
-import { Todos } from "./todos";
+} from './_components/ui/card';
+import { Separator } from './_components/ui/separator';
+import { UserMenu } from './_components/ui/user-menu';
+import { CreateTodo } from './add-todo';
+import { Todos } from './todos';
 
 async function getTodos(sessionId: string | undefined) {
-  return await startSpan(
+  const instrumentationService = getInjection('IInstrumentationService');
+  return await instrumentationService.startSpan(
     {
-      name: "getTodos",
-      op: "function.nextjs",
+      name: 'getTodos',
+      op: 'function.nextjs',
     },
     async () => {
       try {
@@ -34,12 +35,13 @@ async function getTodos(sessionId: string | undefined) {
           err instanceof UnauthenticatedError ||
           err instanceof AuthenticationError
         ) {
-          redirect("/sign-in");
+          redirect('/sign-in');
         }
-        captureException(err);
+        const crashReporterService = getInjection('ICrashReporterService');
+        crashReporterService.report(err);
         throw err;
       }
-    },
+    }
   );
 }
 
@@ -54,13 +56,13 @@ export default async function Home() {
   }
 
   return (
-    <Card className="w-full max-w-lg">
-      <CardHeader className="flex flex-row items-center">
-        <CardTitle className="flex-1">TODOs</CardTitle>
+    <Card className='w-full max-w-lg'>
+      <CardHeader className='flex flex-row items-center'>
+        <CardTitle className='flex-1'>TODOs</CardTitle>
         <UserMenu />
       </CardHeader>
       <Separator />
-      <CardContent className="flex flex-col p-6 gap-4">
+      <CardContent className='flex flex-col p-6 gap-4'>
         <CreateTodo />
         <Todos todos={todos} />
       </CardContent>

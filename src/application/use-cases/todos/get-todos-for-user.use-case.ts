@@ -1,15 +1,14 @@
-import { startSpan } from "@sentry/nextjs";
-
-import { getInjection } from "@/di/container";
-import type { Todo } from "@/src/entities/models/todo";
+import { getInjection } from '@/di/container';
+import type { Todo } from '@/src/entities/models/todo';
 
 export function getTodosForUserUseCase(userId: string): Promise<Todo[]> {
-  return startSpan(
-    { name: "getTodosForUser UseCase", op: "function" },
+  const instrumentationService = getInjection('IInstrumentationService');
+  return instrumentationService.startSpan(
+    { name: 'getTodosForUser UseCase', op: 'function' },
     async () => {
-      const todosRepository = getInjection("ITodosRepository");
+      const todosRepository = getInjection('ITodosRepository');
 
       return await todosRepository.getTodosForUser(userId);
-    },
+    }
   );
 }
