@@ -4,7 +4,7 @@ import { ICrashReporterService } from '@/src/application/services/crash-reporter
 
 @injectable()
 export class MockCrashReporterService implements ICrashReporterService {
-  report(_: Error): string {
+  report(_: any): string {
     return 'errorId';
   }
 }

@@ -1,3 +1,3 @@
 export interface ICrashReporterService {
-  report(error: Error): string;
+  report(error: any): string;
 }

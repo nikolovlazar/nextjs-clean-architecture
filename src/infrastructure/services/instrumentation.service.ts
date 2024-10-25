@@ -11,4 +11,12 @@ export class InstrumentationService implements IInstrumentationService {
   ): T {
     return Sentry.startSpan(options, callback);
   }
+
+  instrumentServerAction<T>(
+    name: string,
+    options: Record<string, any>,
+    callback: () => T
+  ): Promise<T> {
+    return Sentry.withServerActionInstrumentation(name, options, callback);
+  }
 }

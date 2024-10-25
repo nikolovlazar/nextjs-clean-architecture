@@ -1,3 +1,66 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals"],
+  "plugins": ["boundaries"],
+  "settings": {
+    "boundaries/include": ["src/**/*", "app/**/*"],
+    "boundaries/elements": [
+      {
+        "mode": "full",
+        "type": "application",
+        "pattern": ["src/application/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "infrastructure",
+        "pattern": ["src/infrastructure/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "interface-adapters",
+        "pattern": ["src/interface-adapters/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "entities",
+        "pattern": ["src/entities/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "web",
+        "pattern": ["app/**/*"]
+      }
+    ]
+  },
+  "rules": {
+    "boundaries/no-unknown": "error",
+    "boundaries/no-unknown-files": "error",
+    "boundaries/element-types": [
+      "error",
+      {
+        "default": "disallow",
+        "rules": [
+          {
+            "from": "web",
+            "allow": ["web", "interface-adapters", "entities"]
+          },
+          {
+            "from": "interface-adapters",
+            "allow": ["application", "entities"]
+          },
+          {
+            "from": "infrastructure",
+            "allow": ["application", "entities"]
+          },
+          {
+            "from": "application",
+            "allow": ["entities"]
+          },
+          {
+            "from": "entities",
+            "allow": ["entities"]
+          }
+        ]
+      }
+    ]
+  }
 }

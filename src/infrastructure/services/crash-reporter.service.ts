@@ -5,7 +5,7 @@ import { ICrashReporterService } from '@/src/application/services/crash-reporter
 
 @injectable()
 export class CrashReporterService implements ICrashReporterService {
-  report(error: Error): string {
+  report(error: any): string {
     return Sentry.captureException(error);
   }
 }

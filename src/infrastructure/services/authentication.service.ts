@@ -1,16 +1,16 @@
-import { startSpan } from "@sentry/nextjs";
-import { inject, injectable } from "inversify";
-import { generateIdFromEntropySize, Lucia } from "lucia";
+import { inject, injectable } from 'inversify';
+import { generateIdFromEntropySize, Lucia } from 'lucia';
 
-import { SESSION_COOKIE } from "@/config";
-import { DI_SYMBOLS } from "@/di/types";
-import { luciaAdapter } from "@/drizzle";
-import { type IUsersRepository } from "@/src/application/repositories/users.repository.interface";
-import { IAuthenticationService } from "@/src/application/services/authentication.service.interface";
-import { UnauthenticatedError } from "@/src/entities/errors/auth";
-import { Cookie } from "@/src/entities/models/cookie";
-import { Session, sessionSchema } from "@/src/entities/models/session";
-import { User } from "@/src/entities/models/user";
+import { SESSION_COOKIE } from '@/config';
+import { DI_SYMBOLS } from '@/di/types';
+import { luciaAdapter } from '@/drizzle';
+import { type IUsersRepository } from '@/src/application/repositories/users.repository.interface';
+import { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
+import { UnauthenticatedError } from '@/src/entities/errors/auth';
+import { Cookie } from '@/src/entities/models/cookie';
+import { Session, sessionSchema } from '@/src/entities/models/session';
+import { User } from '@/src/entities/models/user';
+import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 
 @injectable()
 export class AuthenticationService implements IAuthenticationService {
@@ -19,13 +19,15 @@ export class AuthenticationService implements IAuthenticationService {
   constructor(
     @inject(DI_SYMBOLS.IUsersRepository)
     private _usersRepository: IUsersRepository,
+    @inject(DI_SYMBOLS.IInstrumentationService)
+    private readonly instrumentationService: IInstrumentationService
   ) {
     this._lucia = new Lucia(luciaAdapter, {
       sessionCookie: {
         name: SESSION_COOKIE,
         expires: false,
         attributes: {
-          secure: process.env.NODE_ENV === "production",
+          secure: process.env.NODE_ENV === 'production',
         },
       },
       getUserAttributes: (attributes) => {
@@ -37,18 +39,18 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   async validateSession(
-    sessionId: string,
+    sessionId: string
   ): Promise<{ user: User; session: Session }> {
-    return await startSpan(
-      { name: "AuthenticationService > validateSession" },
+    return await this.instrumentationService.startSpan(
+      { name: 'AuthenticationService > validateSession' },
       async () => {
-        const result = await startSpan(
-          { name: "lucia.validateSession", op: "function" },
-          () => this._lucia.validateSession(sessionId),
+        const result = await this.instrumentationService.startSpan(
+          { name: 'lucia.validateSession', op: 'function' },
+          () => this._lucia.validateSession(sessionId)
         );
 
         if (!result.user || !result.session) {
-          throw new UnauthenticatedError("Unauthenticated");
+          throw new UnauthenticatedError('Unauthenticated');
         }
 
         const user = await this._usersRepository.getUser(result.user.id);
@@ -58,49 +60,50 @@ export class AuthenticationService implements IAuthenticationService {
         }
 
         return { user, session: result.session };
-      },
+      }
     );
   }
 
   async createSession(
-    user: User,
+    user: User
   ): Promise<{ session: Session; cookie: Cookie }> {
-    return await startSpan(
-      { name: "AuthenticationService > createSession" },
+    return await this.instrumentationService.startSpan(
+      { name: 'AuthenticationService > createSession' },
       async () => {
-        const luciaSession = await startSpan(
-          { name: "lucia.createSession", op: "function" },
-          () => this._lucia.createSession(user.id, {}),
+        const luciaSession = await this.instrumentationService.startSpan(
+          { name: 'lucia.createSession', op: 'function' },
+          () => this._lucia.createSession(user.id, {})
         );
 
         const session = sessionSchema.parse(luciaSession);
-        const cookie = startSpan(
-          { name: "lucia.createSessionCookie", op: "function" },
-          () => this._lucia.createSessionCookie(session.id),
+        const cookie = await this.instrumentationService.startSpan(
+          { name: 'lucia.createSessionCookie', op: 'function' },
+          () => this._lucia.createSessionCookie(session.id)
         );
 
         return { session, cookie };
-      },
+      }
     );
   }
 
   async invalidateSession(sessionId: string): Promise<{ blankCookie: Cookie }> {
-    await startSpan({ name: "lucia.invalidateSession", op: "function" }, () =>
-      this._lucia.invalidateSession(sessionId),
+    await this.instrumentationService.startSpan(
+      { name: 'lucia.invalidateSession', op: 'function' },
+      () => this._lucia.invalidateSession(sessionId)
     );
 
-    const blankCookie = startSpan(
-      { name: "lucia.createBlankSessionCookie", op: "function" },
-      () => this._lucia.createBlankSessionCookie(),
+    const blankCookie = await this.instrumentationService.startSpan(
+      { name: 'lucia.createBlankSessionCookie', op: 'function' },
+      () => this._lucia.createBlankSessionCookie()
     );
 
     return { blankCookie };
   }
 
   generateUserId(): string {
-    return startSpan(
-      { name: "AuthenticationService > generateUserId", op: "function" },
-      () => generateIdFromEntropySize(10),
+    return this.instrumentationService.startSpan(
+      { name: 'AuthenticationService > generateUserId', op: 'function' },
+      () => generateIdFromEntropySize(10)
     );
   }
 }
@@ -109,7 +112,7 @@ interface DatabaseUserAttributes {
   username: string;
 }
 
-declare module "lucia" {
+declare module 'lucia' {
   interface Register {
     Lucia: Lucia;
     DatabaseUserAttributes: DatabaseUserAttributes;
