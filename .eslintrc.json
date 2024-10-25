@@ -6,8 +6,18 @@
     "boundaries/elements": [
       {
         "mode": "full",
-        "type": "application",
-        "pattern": ["src/application/**/*"]
+        "type": "use-cases",
+        "pattern": ["src/application/use-cases/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "service-interfaces",
+        "pattern": ["src/application/services/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "repository-interfaces",
+        "pattern": ["src/application/repositories/**/*"]
       },
       {
         "mode": "full",
@@ -45,14 +55,22 @@
           },
           {
             "from": "interface-adapters",
-            "allow": ["application", "entities"]
+            "allow": ["use-cases", "entities"]
           },
           {
             "from": "infrastructure",
-            "allow": ["application", "entities"]
+            "allow": ["service-interfaces", "repository-interfaces", "entities"]
           },
           {
-            "from": "application",
+            "from": "use-cases",
+            "allow": ["entities"]
+          },
+          {
+            "from": "service-interfaces",
+            "allow": ["entities"]
+          },
+          {
+            "from": "repository-interfaces",
             "allow": ["entities"]
           },
           {
