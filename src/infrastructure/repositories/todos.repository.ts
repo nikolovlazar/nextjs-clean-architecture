@@ -1,5 +1,4 @@
 import { eq } from 'drizzle-orm';
-import { inject, injectable } from 'inversify';
 
 import { db, Transaction } from '@/drizzle';
 import { todos } from '@/drizzle/schema';
@@ -7,15 +6,11 @@ import { ITodosRepository } from '@/src/application/repositories/todos.repositor
 import { DatabaseOperationError } from '@/src/entities/errors/common';
 import { TodoInsert, Todo } from '@/src/entities/models/todo';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
-import { DI_SYMBOLS } from '@/di/types';
 import type { ICrashReporterService } from '@/src/application/services/crash-reporter.service.interface';
 
-@injectable()
 export class TodosRepository implements ITodosRepository {
   constructor(
-    @inject(DI_SYMBOLS.IInstrumentationService)
     private readonly instrumentationService: IInstrumentationService,
-    @inject(DI_SYMBOLS.ICrashReporterService)
     private readonly crashReporterService: ICrashReporterService
   ) {}
 

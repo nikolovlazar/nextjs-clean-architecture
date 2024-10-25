@@ -1,14 +1,13 @@
 import { z } from 'zod';
 
-import { getInjection } from '@/di/container';
 import { toggleTodoUseCase } from '@/src/application/use-cases/todos/toggle-todo.use-case';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
 import { InputParseError } from '@/src/entities/errors/common';
 import { Todo } from '@/src/entities/models/todo';
+import { ServiceFactory } from '@/ioc/service-factory';
 
 function presenter(todo: Todo) {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return instrumentationService.startSpan(
+  return ServiceFactory.getInstrumentationService().startSpan(
     { name: 'toggleTodo Presenter', op: 'serialize' },
     () => ({
       id: todo.id,
@@ -25,15 +24,14 @@ export async function toggleTodoController(
   input: Partial<z.infer<typeof inputSchema>>,
   sessionId: string | undefined
 ): Promise<ReturnType<typeof presenter>> {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return await instrumentationService.startSpan(
+  return await ServiceFactory.getInstrumentationService().startSpan(
     { name: 'toggleTodo Controller' },
     async () => {
       if (!sessionId) {
         throw new UnauthenticatedError('Must be logged in to create a todo');
       }
 
-      const authenticationService = getInjection('IAuthenticationService');
+      const authenticationService = ServiceFactory.getAuthenticationService();
       const { session } = await authenticationService.validateSession(
         sessionId
       );

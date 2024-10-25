@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { getInjection } from '@/di/container';
+import { ServiceFactory } from '@/ioc/service-factory';
 import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import { InputParseError } from '@/src/entities/errors/common';
 import { Cookie } from '@/src/entities/models/cookie';
@@ -13,8 +13,7 @@ const inputSchema = z.object({
 export async function signInController(
   input: Partial<z.infer<typeof inputSchema>>
 ): Promise<Cookie> {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return await instrumentationService.startSpan(
+  return await ServiceFactory.getInstrumentationService().startSpan(
     { name: 'signIn Controller' },
     async () => {
       const { data, error: inputParseError } = inputSchema.safeParse(input);
