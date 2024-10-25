@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-import { getInjection } from '@/di/container';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
 import { InputParseError } from '@/src/entities/errors/common';
 import { toggleTodoUseCase } from '@/src/application/use-cases/todos/toggle-todo.use-case';
 import { deleteTodoUseCase } from '@/src/application/use-cases/todos/delete-todo.use-case';
+import { ServiceFactory } from '@/ioc/service-factory';
 
 const inputSchema = z.object({
   dirty: z.array(z.number()),
@@ -15,8 +15,7 @@ export async function bulkUpdateController(
   input: z.infer<typeof inputSchema>,
   sessionId: string | undefined
 ): Promise<void> {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return await instrumentationService.startSpan(
+  return await ServiceFactory.getInstrumentationService().startSpan(
     {
       name: 'bulkUpdate Controller',
     },
@@ -26,7 +25,7 @@ export async function bulkUpdateController(
           'Must be logged in to bulk update todos'
         );
       }
-      const authenticationService = getInjection('IAuthenticationService');
+      const authenticationService = ServiceFactory.getAuthenticationService();
       const { user } = await authenticationService.validateSession(sessionId);
 
       const { data, error: inputParseError } = inputSchema.safeParse(input);
@@ -37,10 +36,9 @@ export async function bulkUpdateController(
 
       const { dirty, deleted } = data;
 
-      const transactionManagerService = getInjection(
-        'ITransactionManagerService'
-      );
-      await instrumentationService.startSpan(
+      const transactionManagerService =
+        ServiceFactory.getTransactionManagerService();
+      await ServiceFactory.getInstrumentationService().startSpan(
         { name: 'Bulk Update Transaction' },
         async () => {
           await transactionManagerService.startTransaction(async (mainTx) => {

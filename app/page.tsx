@@ -2,7 +2,6 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { SESSION_COOKIE } from '@/config';
-import { getInjection } from '@/di/container';
 import {
   AuthenticationError,
   UnauthenticatedError,
@@ -19,9 +18,10 @@ import { Separator } from './_components/ui/separator';
 import { UserMenu } from './_components/ui/user-menu';
 import { CreateTodo } from './add-todo';
 import { Todos } from './todos';
+import { ServiceFactory } from '@/ioc/service-factory';
 
 async function getTodos(sessionId: string | undefined) {
-  const instrumentationService = getInjection('IInstrumentationService');
+  const instrumentationService = ServiceFactory.getInstrumentationService();
   return await instrumentationService.startSpan(
     {
       name: 'getTodos',
@@ -37,7 +37,7 @@ async function getTodos(sessionId: string | undefined) {
         ) {
           redirect('/sign-in');
         }
-        const crashReporterService = getInjection('ICrashReporterService');
+        const crashReporterService = ServiceFactory.getCrashReporterService();
         crashReporterService.report(err);
         throw err;
       }

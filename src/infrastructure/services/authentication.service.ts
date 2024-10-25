@@ -1,8 +1,6 @@
-import { inject, injectable } from 'inversify';
 import { generateIdFromEntropySize, Lucia } from 'lucia';
 
 import { SESSION_COOKIE } from '@/config';
-import { DI_SYMBOLS } from '@/di/types';
 import { luciaAdapter } from '@/drizzle';
 import { type IUsersRepository } from '@/src/application/repositories/users.repository.interface';
 import { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
@@ -12,14 +10,11 @@ import { Session, sessionSchema } from '@/src/entities/models/session';
 import { User } from '@/src/entities/models/user';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 
-@injectable()
 export class AuthenticationService implements IAuthenticationService {
   private _lucia: Lucia;
 
   constructor(
-    @inject(DI_SYMBOLS.IUsersRepository)
     private _usersRepository: IUsersRepository,
-    @inject(DI_SYMBOLS.IInstrumentationService)
     private readonly instrumentationService: IInstrumentationService
   ) {
     this._lucia = new Lucia(luciaAdapter, {

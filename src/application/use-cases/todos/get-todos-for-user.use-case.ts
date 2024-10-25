@@ -1,12 +1,12 @@
-import { getInjection } from '@/di/container';
 import type { Todo } from '@/src/entities/models/todo';
+import { ServiceFactory } from '@/ioc/service-factory';
+import { RepositoryFactory } from '@/ioc/repository-factory';
 
 export function getTodosForUserUseCase(userId: string): Promise<Todo[]> {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return instrumentationService.startSpan(
+  return ServiceFactory.getInstrumentationService().startSpan(
     { name: 'getTodosForUser UseCase', op: 'function' },
     async () => {
-      const todosRepository = getInjection('ITodosRepository');
+      const todosRepository = RepositoryFactory.getTodosRepository();
 
       return await todosRepository.getTodosForUser(userId);
     }

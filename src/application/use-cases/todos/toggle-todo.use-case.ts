@@ -1,8 +1,9 @@
-import { getInjection } from '@/di/container';
 import { UnauthorizedError } from '@/src/entities/errors/auth';
 import { NotFoundError } from '@/src/entities/errors/common';
 import type { Todo } from '@/src/entities/models/todo';
 import type { ITransaction } from '@/src/entities/models/transaction.interface';
+import { ServiceFactory } from '@/ioc/service-factory';
+import { RepositoryFactory } from '@/ioc/repository-factory';
 
 export function toggleTodoUseCase(
   input: {
@@ -11,11 +12,10 @@ export function toggleTodoUseCase(
   userId: string,
   tx?: ITransaction
 ): Promise<Todo> {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return instrumentationService.startSpan(
+  return ServiceFactory.getInstrumentationService().startSpan(
     { name: 'toggleTodo Use Case', op: 'function' },
     async () => {
-      const todosRepository = getInjection('ITodosRepository');
+      const todosRepository = RepositoryFactory.getTodosRepository();
 
       const todo = await todosRepository.getTodo(input.todoId);
 

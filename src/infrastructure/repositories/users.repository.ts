@@ -1,8 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { inject, injectable } from 'inversify';
 
 import { db } from '@/drizzle';
-import { DI_SYMBOLS } from '@/di/types';
 import { users } from '@/drizzle/schema';
 import { IUsersRepository } from '@/src/application/repositories/users.repository.interface';
 import { DatabaseOperationError } from '@/src/entities/errors/common';
@@ -10,12 +8,9 @@ import { User } from '@/src/entities/models/user';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 import type { ICrashReporterService } from '@/src/application/services/crash-reporter.service.interface';
 
-@injectable()
 export class UsersRepository implements IUsersRepository {
   constructor(
-    @inject(DI_SYMBOLS.IInstrumentationService)
     private readonly instrumentationService: IInstrumentationService,
-    @inject(DI_SYMBOLS.ICrashReporterService)
     private readonly crashReporterService: ICrashReporterService
   ) {}
   async getUser(id: string): Promise<User | undefined> {

@@ -13,10 +13,10 @@ import {
   AuthenticationError,
   UnauthenticatedError,
 } from '@/src/entities/errors/auth';
-import { getInjection } from '@/di/container';
+import { ServiceFactory } from '@/ioc/service-factory';
 
 export async function signUp(formData: FormData) {
-  const instrumentationService = getInjection('IInstrumentationService');
+  const instrumentationService = ServiceFactory.getInstrumentationService();
   return await instrumentationService.instrumentServerAction(
     'signUp',
     { recordResponse: true },
@@ -40,7 +40,7 @@ export async function signUp(formData: FormData) {
               'Invalid data. Make sure the Password and Confirm Password match.',
           };
         }
-        const crashReporterService = getInjection('ICrashReporterService');
+        const crashReporterService = ServiceFactory.getCrashReporterService();
         crashReporterService.report(err);
 
         return {
@@ -62,7 +62,7 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signIn(formData: FormData) {
-  const instrumentationService = getInjection('IInstrumentationService');
+  const instrumentationService = ServiceFactory.getInstrumentationService();
   return await instrumentationService.instrumentServerAction(
     'signIn',
     { recordResponse: true },
@@ -82,7 +82,7 @@ export async function signIn(formData: FormData) {
             error: 'Incorrect username or password',
           };
         }
-        const crashReporterService = getInjection('ICrashReporterService');
+        const crashReporterService = ServiceFactory.getCrashReporterService();
         crashReporterService.report(err);
         return {
           error:
@@ -102,7 +102,7 @@ export async function signIn(formData: FormData) {
 }
 
 export async function signOut() {
-  const instrumentationService = getInjection('IInstrumentationService');
+  const instrumentationService = ServiceFactory.getInstrumentationService();
   return await instrumentationService.instrumentServerAction(
     'signOut',
     { recordResponse: true },
@@ -120,7 +120,7 @@ export async function signOut() {
         ) {
           redirect('/sign-in');
         }
-        const crashReporterService = getInjection('ICrashReporterService');
+        const crashReporterService = ServiceFactory.getCrashReporterService();
         crashReporterService.report(err);
         throw err;
       }

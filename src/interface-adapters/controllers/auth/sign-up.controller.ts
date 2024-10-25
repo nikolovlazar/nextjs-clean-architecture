@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { getInjection } from '@/di/container';
 import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 import { InputParseError } from '@/src/entities/errors/common';
+import { ServiceFactory } from '@/ioc/service-factory';
 
 const inputSchema = z
   .object({
@@ -28,8 +28,7 @@ const inputSchema = z
 export async function signUpController(
   input: Partial<z.infer<typeof inputSchema>>
 ): Promise<ReturnType<typeof signUpUseCase>> {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return await instrumentationService.startSpan(
+  return await ServiceFactory.getInstrumentationService().startSpan(
     { name: 'signUp Controller' },
     async () => {
       const { data, error: inputParseError } = inputSchema.safeParse(input);

@@ -2,7 +2,7 @@
   "extends": ["next/core-web-vitals"],
   "plugins": ["boundaries"],
   "settings": {
-    "boundaries/include": ["src/**/*", "app/**/*"],
+    "boundaries/include": ["src/**/*", "app/**/*", "ioc/*"],
     "boundaries/elements": [
       {
         "mode": "full",
@@ -38,6 +38,11 @@
         "mode": "full",
         "type": "infrastructure",
         "pattern": ["src/infrastructure/**/*"]
+      },
+      {
+        "mode": "full",
+        "type": "ioc",
+        "pattern": ["ioc/*"]
       }
     ]
   },
@@ -51,11 +56,11 @@
         "rules": [
           {
             "from": "web",
-            "allow": ["web", "interface-adapters", "entities"]
+            "allow": ["web", "interface-adapters", "entities", "ioc"]
           },
           {
             "from": "interface-adapters",
-            "allow": ["use-cases", "entities"]
+            "allow": ["use-cases", "entities", "ioc"]
           },
           {
             "from": "infrastructure",
@@ -63,7 +68,7 @@
           },
           {
             "from": "use-cases",
-            "allow": ["entities"]
+            "allow": ["entities", "ioc"]
           },
           {
             "from": "service-interfaces",
@@ -76,6 +81,15 @@
           {
             "from": "entities",
             "allow": ["entities"]
+          },
+          {
+            "from": "ioc",
+            "allow": [
+              "ioc",
+              "service-interfaces",
+              "repository-interfaces",
+              "infrastructure"
+            ]
           }
         ]
       }

@@ -1,22 +1,9 @@
-import { withSentryConfig } from "@sentry/nextjs";
-import webpack from "webpack";
+import { withSentryConfig } from '@sentry/nextjs';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ["@node-rs/argon2"],
-  },
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.plugins.push(
-        new webpack.BannerPlugin({
-          banner: 'require("reflect-metadata");',
-          raw: true,
-          entryOnly: true,
-        }),
-      );
-    }
-    return config;
+    serverComponentsExternalPackages: ['@node-rs/argon2'],
   },
 };
 
@@ -24,8 +11,8 @@ export default withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
-  org: "sentry-devrel",
-  project: "clean-arch",
+  org: 'sentry-devrel',
+  project: 'clean-arch',
 
   // An auth token is required for uploading source maps.
   authToken: process.env.SENTRY_AUTH_TOKEN,

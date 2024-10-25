@@ -1,14 +1,13 @@
-import { getInjection } from '@/di/container';
 import { Cookie } from '@/src/entities/models/cookie';
+import { ServiceFactory } from '@/ioc/service-factory';
 
 export function signOutUseCase(
   sessionId: string
 ): Promise<{ blankCookie: Cookie }> {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return instrumentationService.startSpan(
+  return ServiceFactory.getInstrumentationService().startSpan(
     { name: 'signOut Use Case', op: 'function' },
     async () => {
-      const authenticationService = getInjection('IAuthenticationService');
+      const authenticationService = ServiceFactory.getAuthenticationService();
 
       return await authenticationService.invalidateSession(sessionId);
     }

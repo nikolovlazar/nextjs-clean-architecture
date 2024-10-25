@@ -1,6 +1,7 @@
-import { getInjection } from '@/di/container';
 import { InputParseError } from '@/src/entities/errors/common';
 import type { Todo } from '@/src/entities/models/todo';
+import { ServiceFactory } from '@/ioc/service-factory';
+import { RepositoryFactory } from '@/ioc/repository-factory';
 
 export function createTodoUseCase(
   input: {
@@ -9,11 +10,10 @@ export function createTodoUseCase(
   userId: string,
   tx?: any
 ): Promise<Todo> {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return instrumentationService.startSpan(
+  return ServiceFactory.getInstrumentationService().startSpan(
     { name: 'createTodo Use Case', op: 'function' },
     async () => {
-      const todosRepository = getInjection('ITodosRepository');
+      const todosRepository = RepositoryFactory.getTodosRepository();
 
       // HINT: this is where you'd do authorization checks - is this user authorized to create a todo
       // for example: free users are allowed only 5 todos, throw an UnauthorizedError if more than 5

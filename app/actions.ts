@@ -4,15 +4,15 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
 import { SESSION_COOKIE } from '@/config';
-import { getInjection } from '@/di/container';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
 import { InputParseError, NotFoundError } from '@/src/entities/errors/common';
 import { createTodoController } from '@/src/interface-adapters/controllers/todos/create-todo.controller';
 import { toggleTodoController } from '@/src/interface-adapters/controllers/todos/toggle-todo.controller';
 import { bulkUpdateController } from '@/src/interface-adapters/controllers/todos/bulk-update.controller';
+import { ServiceFactory } from '@/ioc/service-factory';
 
 export async function createTodo(formData: FormData) {
-  const instrumentationService = getInjection('IInstrumentationService');
+  const instrumentationService = ServiceFactory.getInstrumentationService();
   return await instrumentationService.instrumentServerAction(
     'createTodo',
     { recordResponse: true },
@@ -28,7 +28,7 @@ export async function createTodo(formData: FormData) {
         if (err instanceof UnauthenticatedError) {
           return { error: 'Must be logged in to create a todo' };
         }
-        const crashReporterService = getInjection('ICrashReporterService');
+        const crashReporterService = ServiceFactory.getCrashReporterService();
         crashReporterService.report(err);
         return {
           error:
@@ -43,7 +43,7 @@ export async function createTodo(formData: FormData) {
 }
 
 export async function toggleTodo(todoId: number) {
-  const instrumentationService = getInjection('IInstrumentationService');
+  const instrumentationService = ServiceFactory.getInstrumentationService();
   return await instrumentationService.instrumentServerAction(
     'toggleTodo',
     { recordResponse: true },
@@ -61,7 +61,7 @@ export async function toggleTodo(todoId: number) {
         if (err instanceof NotFoundError) {
           return { error: 'Todo does not exist' };
         }
-        const crashReporterService = getInjection('ICrashReporterService');
+        const crashReporterService = ServiceFactory.getCrashReporterService();
         crashReporterService.report(err);
         return {
           error:
@@ -76,7 +76,7 @@ export async function toggleTodo(todoId: number) {
 }
 
 export async function bulkUpdate(dirty: number[], deleted: number[]) {
-  const instrumentationService = getInjection('IInstrumentationService');
+  const instrumentationService = ServiceFactory.getInstrumentationService();
   return await instrumentationService.instrumentServerAction(
     'bulkUpdate',
     { recordResponse: true },
@@ -95,7 +95,7 @@ export async function bulkUpdate(dirty: number[], deleted: number[]) {
         if (err instanceof NotFoundError) {
           return { error: 'Todo does not exist' };
         }
-        const crashReporterService = getInjection('ICrashReporterService');
+        const crashReporterService = ServiceFactory.getCrashReporterService();
         crashReporterService.report(err);
         return {
           error:
