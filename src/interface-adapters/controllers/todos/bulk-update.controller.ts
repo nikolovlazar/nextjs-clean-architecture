@@ -1,11 +1,10 @@
-import { z } from "zod";
-import { startSpan } from "@sentry/nextjs";
+import { z } from 'zod';
 
-import { getInjection } from "@/di/container";
-import { UnauthenticatedError } from "@/src/entities/errors/auth";
-import { InputParseError } from "@/src/entities/errors/common";
-import { toggleTodoUseCase } from "@/src/application/use-cases/todos/toggle-todo.use-case";
-import { deleteTodoUseCase } from "@/src/application/use-cases/todos/delete-todo.use-case";
+import { getInjection } from '@/di/container';
+import { UnauthenticatedError } from '@/src/entities/errors/auth';
+import { InputParseError } from '@/src/entities/errors/common';
+import { toggleTodoUseCase } from '@/src/application/use-cases/todos/toggle-todo.use-case';
+import { deleteTodoUseCase } from '@/src/application/use-cases/todos/delete-todo.use-case';
 
 const inputSchema = z.object({
   dirty: z.array(z.number()),
@@ -14,44 +13,45 @@ const inputSchema = z.object({
 
 export async function bulkUpdateController(
   input: z.infer<typeof inputSchema>,
-  sessionId: string | undefined,
+  sessionId: string | undefined
 ): Promise<void> {
-  await startSpan(
+  const instrumentationService = getInjection('IInstrumentationService');
+  return await instrumentationService.startSpan(
     {
-      name: "bulkUpdate Controller",
+      name: 'bulkUpdate Controller',
     },
     async () => {
       if (!sessionId) {
         throw new UnauthenticatedError(
-          "Must be logged in to bulk update todos",
+          'Must be logged in to bulk update todos'
         );
       }
-      const authenticationService = getInjection("IAuthenticationService");
+      const authenticationService = getInjection('IAuthenticationService');
       const { user } = await authenticationService.validateSession(sessionId);
 
       const { data, error: inputParseError } = inputSchema.safeParse(input);
 
       if (inputParseError) {
-        throw new InputParseError("Invalid data", { cause: inputParseError });
+        throw new InputParseError('Invalid data', { cause: inputParseError });
       }
 
       const { dirty, deleted } = data;
 
       const transactionManagerService = getInjection(
-        "ITransactionManagerService",
+        'ITransactionManagerService'
       );
-      await startSpan(
-        { name: "Bulk Update Transaction" },
-        async () =>
+      await instrumentationService.startSpan(
+        { name: 'Bulk Update Transaction' },
+        async () => {
           await transactionManagerService.startTransaction(async (mainTx) => {
             try {
               await Promise.all(
                 dirty.map((t) =>
-                  toggleTodoUseCase({ todoId: t }, user.id, mainTx),
-                ),
+                  toggleTodoUseCase({ todoId: t }, user.id, mainTx)
+                )
               );
             } catch (err) {
-              console.error("Rolling back toggles!");
+              console.error('Rolling back toggles!');
               mainTx.rollback();
             }
 
@@ -61,18 +61,19 @@ export async function bulkUpdateController(
                 try {
                   await Promise.all(
                     deleted.map((t) =>
-                      deleteTodoUseCase({ todoId: t }, user.id, deleteTx),
-                    ),
+                      deleteTodoUseCase({ todoId: t }, user.id, deleteTx)
+                    )
                   );
                 } catch (err) {
-                  console.error("Rolling back deletes!");
+                  console.error('Rolling back deletes!');
                   deleteTx.rollback();
                 }
               },
-              mainTx,
+              mainTx
             );
-          }),
+          });
+        }
       );
-    },
+    }
   );
 }

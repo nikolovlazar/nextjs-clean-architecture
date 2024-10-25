@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { startSpan } from "@sentry/nextjs";
+import { z } from 'zod';
 
-import { signUpUseCase } from "@/src/application/use-cases/auth/sign-up.use-case";
-import { InputParseError } from "@/src/entities/errors/common";
+import { getInjection } from '@/di/container';
+import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
+import { InputParseError } from '@/src/entities/errors/common';
 
 const inputSchema = z
   .object({
@@ -13,28 +13,32 @@ const inputSchema = z
   .superRefine(({ password, confirm_password }, ctx) => {
     if (confirm_password !== password) {
       ctx.addIssue({
-        code: "custom",
-        message: "The passwords did not match",
-        path: ["password"],
+        code: 'custom',
+        message: 'The passwords did not match',
+        path: ['password'],
       });
       ctx.addIssue({
-        code: "custom",
-        message: "The passwords did not match",
-        path: ["confirmPassword"],
+        code: 'custom',
+        message: 'The passwords did not match',
+        path: ['confirmPassword'],
       });
     }
   });
 
 export async function signUpController(
-  input: Partial<z.infer<typeof inputSchema>>,
+  input: Partial<z.infer<typeof inputSchema>>
 ): Promise<ReturnType<typeof signUpUseCase>> {
-  return await startSpan({ name: "signUp Controller" }, async () => {
-    const { data, error: inputParseError } = inputSchema.safeParse(input);
+  const instrumentationService = getInjection('IInstrumentationService');
+  return await instrumentationService.startSpan(
+    { name: 'signUp Controller' },
+    async () => {
+      const { data, error: inputParseError } = inputSchema.safeParse(input);
 
-    if (inputParseError) {
-      throw new InputParseError("Invalid data", { cause: inputParseError });
+      if (inputParseError) {
+        throw new InputParseError('Invalid data', { cause: inputParseError });
+      }
+
+      return await signUpUseCase(data);
     }
-
-    return await signUpUseCase(data);
-  });
+  );
 }
