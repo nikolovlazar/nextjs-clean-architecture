@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { startSpan } from "@sentry/nextjs";
+import { z } from 'zod';
 
-import { signInUseCase } from "@/src/application/use-cases/auth/sign-in.use-case";
-import { InputParseError } from "@/src/entities/errors/common";
-import { Cookie } from "@/src/entities/models/cookie";
+import { getInjection } from '@/di/container';
+import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
+import { InputParseError } from '@/src/entities/errors/common';
+import { Cookie } from '@/src/entities/models/cookie';
 
 const inputSchema = z.object({
   username: z.string().min(3).max(31),
@@ -11,16 +11,20 @@ const inputSchema = z.object({
 });
 
 export async function signInController(
-  input: Partial<z.infer<typeof inputSchema>>,
+  input: Partial<z.infer<typeof inputSchema>>
 ): Promise<Cookie> {
-  return await startSpan({ name: "signIn Controller" }, async () => {
-    const { data, error: inputParseError } = inputSchema.safeParse(input);
+  const instrumentationService = getInjection('IInstrumentationService');
+  return await instrumentationService.startSpan(
+    { name: 'signIn Controller' },
+    async () => {
+      const { data, error: inputParseError } = inputSchema.safeParse(input);
 
-    if (inputParseError) {
-      throw new InputParseError("Invalid data", { cause: inputParseError });
+      if (inputParseError) {
+        throw new InputParseError('Invalid data', { cause: inputParseError });
+      }
+
+      const { cookie } = await signInUseCase(data);
+      return cookie;
     }
-
-    const { cookie } = await signInUseCase(data);
-    return cookie;
-  });
+  );
 }
