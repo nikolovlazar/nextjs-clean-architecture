@@ -37,8 +37,7 @@ Clean Architecture achieves this through defining a _dependency hierarchy_ - lay
   - `infrastructure` - **Infrastructure Layer** - holds implementations of repositories and services, and pulls in the interfaces from `application`
   - `interface-adapters` - **Interface Adapters Layer** - holds controllers that serve as an entry point to the system (used in Frameworks & Drivers layer to interact with the system)
 - `tests` - Unit tests live here - the `unit` subfolder's structure matches `src`
-- `next.config.mjs` - Next.js configuration - take note of the `webpack.BannerPlugin` line! That's how you setup [inversify](https://inversify.io) in Next.js, the _Inversion of Control_ library. ([I made a video about this](https://youtu.be/2NVYG5VDmwQ))
-- `tsconfig.json` - Take note of lines: 13, 14, and 15!
+- `next.config.mjs` - Next.js configuration
 - `vitest.config.ts` - Take note of how the `@` alias is defined!
 
 ## Layers explanation
@@ -73,7 +72,7 @@ Clean Architecture achieves this through defining a _dependency hierarchy_ - lay
   - This layer pulls in the interfaces of repositories and services from the _Application Layer_ and implements them in their own classes.
   - _Repositories_ are how we implement the database operations. They are classes that expose methods that perform a single database operation - like `getTodo`, or `createTodo`, or `updateTodo`. This means that we use the database library / driver in these classes only. They don't perform any data validation, just execute queries and mutations against the database and either throw our custom defined _Errors_ or return results.
   - _Services_ are shared services that are being used across the application - like an authentication service, or email service, or implement external systems like Stripe (create payments, validate receipts etc...). These services also use and depend on other frameworks and libraries. That's why their implementation is kept here alongside the repositories.
-  - Since we don't want any layer to depend on this one (and transitively depend on the database and all the services), we use the [_Dependency Inversion principle_](https://en.wikipedia.org/wiki/Dependency_inversion_principle). This allows us to depend only on the interfaces defined in the _Application Layer_, instead of the implementations in the _Infrastructure Layer_. We use an [_Inversion of Control_](https://en.wikipedia.org/wiki/Inversion_of_control) library like [inversify](https://inversify.io) to abstract the implementation behind the interfaces and "inject" it whenever we need it. We create the abstraction in the `di` directory. We "register" the repositories and services using Symbols as identifiers, and we "request" the services and repositories using those symbols when we need the actual implementation. That's how we can use the implementation, without needing to explicitly depend on it (import it).
+  - Since we don't want any layer to depend on this one (and transitively depend on the database and all the services), we use the [_Dependency Inversion principle_](https://en.wikipedia.org/wiki/Dependency_inversion_principle). This allows us to depend only on the interfaces defined in the _Application Layer_, instead of the implementations in the _Infrastructure Layer_. We use an [_Inversion of Control_](https://en.wikipedia.org/wiki/Inversion_of_control) library like [ioctopus](https://github.com/Evyweb/ioctopus) to abstract the implementation behind the interfaces and "inject" it whenever we need it. We create the abstraction in the `di` directory. We "bind" the repositories, services, controllers, and use cases to Symbols, and we "resolve" them using those symbols when we need the actual implementation. That's how we can use the implementation, without needing to explicitly depend on it (import it).
 
 ## FAQ
 
@@ -83,7 +82,7 @@ Clean Architecture achieves this through defining a _dependency hierarchy_ - lay
 <details>
   <summary><b>Is Clean Architecture / this implementation serverless-friendly? Can I deploy this to Vercel?</b></summary>
 
-There is a catch here - <b>You can't use the Edge runtime</b>. That means [Middleware](https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes#use-cases) will not work. This is because of [inversify](https://inversify.io). Inversify only supports the Node runtime. There is a different library called [typed-inject](https://www.npmjs.com/package/typed-inject) that does not use reflection, so you should be able to use it in the middleware, but I haven't tried it yet.
+Yes! You can use it with Page Router, App Router, Middleware, API Handlers, Server Actions, anything really! Usually, achieving Dependency Injection in JavaScript projects is being done with the [Inversify.js](https://inversify.io) library, which is incompatible with other runtimes except Node. This project implements [ioctopus](https://github.com/Evyweb/ioctopus), a simple IoC container that doesn't rely on `reflect-metadata` and works on all runtimes.
 
 </details>
 
