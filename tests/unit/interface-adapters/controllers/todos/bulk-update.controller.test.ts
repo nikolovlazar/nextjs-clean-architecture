@@ -1,13 +1,16 @@
 import { expect, it, vi } from 'vitest';
 
-import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
+import { resolveDependency } from '@/di/container';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
-import { createTodoUseCase } from '@/src/application/use-cases/todos/create-todo.use-case';
 import { InputParseError } from '@/src/entities/errors/common';
-import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
-import { bulkUpdateController } from '@/src/interface-adapters/controllers/todos/bulk-update.controller';
-import { getTodosForUserController } from '@/src/interface-adapters/controllers/todos/get-todos-for-user.controller';
 
+const signInUseCase = resolveDependency('ISignInUseCase');
+const createTodoUseCase = resolveDependency('ICreateTodoUseCase');
+const bulkUpdateController = resolveDependency('IBulkUpdateController');
+const getTodosForUserController = resolveDependency(
+  'IGetTodosForUserController'
+);
+const signOutUseCase = resolveDependency('ISignOutUseCase');
 // A great guide on test names
 // https://www.epicweb.dev/talks/how-to-write-better-test-names
 it('bulk updates', async () => {

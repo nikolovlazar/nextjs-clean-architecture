@@ -1,9 +1,12 @@
 import { expect, it } from 'vitest';
 
-import { signInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
+import { resolveDependency } from '@/di/container';
 import { SESSION_COOKIE } from '@/config';
 import { InputParseError } from '@/src/entities/errors/common';
 import { AuthenticationError } from '@/src/entities/errors/auth';
+
+const signInController = resolveDependency('ISignInController');
+
 // A great guide on test names
 // https://www.epicweb.dev/talks/how-to-write-better-test-names
 it('signs in with valid input', () => {

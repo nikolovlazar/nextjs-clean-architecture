@@ -7,7 +7,6 @@ import {
   UnauthenticatedError,
 } from '@/src/entities/errors/auth';
 import { Todo } from '@/src/entities/models/todo';
-import { getTodosForUserController } from '@/src/interface-adapters/controllers/todos/get-todos-for-user.controller';
 import {
   Card,
   CardContent,
@@ -18,10 +17,10 @@ import { Separator } from './_components/ui/separator';
 import { UserMenu } from './_components/ui/user-menu';
 import { CreateTodo } from './add-todo';
 import { Todos } from './todos';
-import { ServiceFactory } from '@/ioc/service-factory';
+import { resolveDependency } from '@/di/container';
 
 async function getTodos(sessionId: string | undefined) {
-  const instrumentationService = ServiceFactory.getInstrumentationService();
+  const instrumentationService = resolveDependency('IInstrumentationService');
   return await instrumentationService.startSpan(
     {
       name: 'getTodos',
@@ -29,6 +28,9 @@ async function getTodos(sessionId: string | undefined) {
     },
     async () => {
       try {
+        const getTodosForUserController = resolveDependency(
+          'IGetTodosForUserController'
+        );
         return await getTodosForUserController(sessionId);
       } catch (err) {
         if (
@@ -37,7 +39,7 @@ async function getTodos(sessionId: string | undefined) {
         ) {
           redirect('/sign-in');
         }
-        const crashReporterService = ServiceFactory.getCrashReporterService();
+        const crashReporterService = resolveDependency('ICrashReporterService');
         crashReporterService.report(err);
         throw err;
       }

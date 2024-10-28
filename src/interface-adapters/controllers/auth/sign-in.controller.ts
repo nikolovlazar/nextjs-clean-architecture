@@ -1,29 +1,37 @@
 import { z } from 'zod';
 
-import { ServiceFactory } from '@/ioc/service-factory';
-import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
+import { ISignInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import { InputParseError } from '@/src/entities/errors/common';
 import { Cookie } from '@/src/entities/models/cookie';
+import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 
 const inputSchema = z.object({
   username: z.string().min(3).max(31),
   password: z.string().min(6).max(31),
 });
 
-export async function signInController(
-  input: Partial<z.infer<typeof inputSchema>>
-): Promise<Cookie> {
-  return await ServiceFactory.getInstrumentationService().startSpan(
-    { name: 'signIn Controller' },
-    async () => {
-      const { data, error: inputParseError } = inputSchema.safeParse(input);
+export type ISignInController = ReturnType<typeof signInController>;
 
-      if (inputParseError) {
-        throw new InputParseError('Invalid data', { cause: inputParseError });
+export const signInController =
+  ({
+    instrumentationService,
+    signInUseCase,
+  }: {
+    instrumentationService: IInstrumentationService;
+    signInUseCase: ISignInUseCase;
+  }) =>
+  async (input: Partial<z.infer<typeof inputSchema>>): Promise<Cookie> => {
+    return await instrumentationService.startSpan(
+      { name: 'signIn Controller' },
+      async () => {
+        const { data, error: inputParseError } = inputSchema.safeParse(input);
+
+        if (inputParseError) {
+          throw new InputParseError('Invalid data', { cause: inputParseError });
+        }
+
+        const { cookie } = await signInUseCase(data);
+        return cookie;
       }
-
-      const { cookie } = await signInUseCase(data);
-      return cookie;
-    }
-  );
-}
+    );
+  };

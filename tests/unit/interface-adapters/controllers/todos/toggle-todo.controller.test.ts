@@ -1,14 +1,16 @@
 import { expect, it } from 'vitest';
 
-import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
+import { resolveDependency } from '@/di/container';
 import {
   UnauthenticatedError,
   UnauthorizedError,
 } from '@/src/entities/errors/auth';
-import { createTodoUseCase } from '@/src/application/use-cases/todos/create-todo.use-case';
-import { toggleTodoController } from '@/src/interface-adapters/controllers/todos/toggle-todo.controller';
 import { InputParseError } from '@/src/entities/errors/common';
-import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
+
+const signInUseCase = resolveDependency('ISignInUseCase');
+const createTodoUseCase = resolveDependency('ICreateTodoUseCase');
+const toggleTodoController = resolveDependency('IToggleTodoController');
+const signOutUseCase = resolveDependency('ISignOutUseCase');
 
 // A great guide on test names
 // https://www.epicweb.dev/talks/how-to-write-better-test-names

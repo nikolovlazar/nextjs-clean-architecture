@@ -1,8 +1,10 @@
 import { expect, it } from 'vitest';
 
-import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
-import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import { SESSION_COOKIE } from '@/config';
+import { resolveDependency } from '@/di/container';
+
+const signInUseCase = resolveDependency('ISignInUseCase');
+const signOutUseCase = resolveDependency('ISignOutUseCase');
 
 // A great guide on test names
 // https://www.epicweb.dev/talks/how-to-write-better-test-names

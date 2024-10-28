@@ -1,7 +1,10 @@
 import { expect, it } from 'vitest';
 
-import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
+import { resolveDependency } from '@/di/container';
 import { AuthenticationError } from '@/src/entities/errors/auth';
+
+const signInUseCase = resolveDependency('ISignInUseCase');
+
 // A great guide on test names
 // https://www.epicweb.dev/talks/how-to-write-better-test-names
 it('returns session and cookie', async () => {

@@ -4,19 +4,16 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { Cookie } from '@/src/entities/models/cookie';
-import { signInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
-import { signUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
-import { signOutController } from '@/src/interface-adapters/controllers/auth/sign-out.controller';
 import { SESSION_COOKIE } from '@/config';
 import { InputParseError } from '@/src/entities/errors/common';
 import {
   AuthenticationError,
   UnauthenticatedError,
 } from '@/src/entities/errors/auth';
-import { ServiceFactory } from '@/ioc/service-factory';
+import { resolveDependency } from '@/di/container';
 
 export async function signUp(formData: FormData) {
-  const instrumentationService = ServiceFactory.getInstrumentationService();
+  const instrumentationService = resolveDependency('IInstrumentationService');
   return await instrumentationService.instrumentServerAction(
     'signUp',
     { recordResponse: true },
@@ -27,6 +24,7 @@ export async function signUp(formData: FormData) {
 
       let sessionCookie: Cookie;
       try {
+        const signUpController = resolveDependency('ISignUpController');
         const { cookie } = await signUpController({
           username,
           password,
@@ -40,7 +38,7 @@ export async function signUp(formData: FormData) {
               'Invalid data. Make sure the Password and Confirm Password match.',
           };
         }
-        const crashReporterService = ServiceFactory.getCrashReporterService();
+        const crashReporterService = resolveDependency('ICrashReporterService');
         crashReporterService.report(err);
 
         return {
@@ -62,7 +60,7 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signIn(formData: FormData) {
-  const instrumentationService = ServiceFactory.getInstrumentationService();
+  const instrumentationService = resolveDependency('IInstrumentationService');
   return await instrumentationService.instrumentServerAction(
     'signIn',
     { recordResponse: true },
@@ -72,6 +70,7 @@ export async function signIn(formData: FormData) {
 
       let sessionCookie: Cookie;
       try {
+        const signInController = resolveDependency('ISignInController');
         sessionCookie = await signInController({ username, password });
       } catch (err) {
         if (
@@ -82,7 +81,7 @@ export async function signIn(formData: FormData) {
             error: 'Incorrect username or password',
           };
         }
-        const crashReporterService = ServiceFactory.getCrashReporterService();
+        const crashReporterService = resolveDependency('ICrashReporterService');
         crashReporterService.report(err);
         return {
           error:
@@ -102,7 +101,7 @@ export async function signIn(formData: FormData) {
 }
 
 export async function signOut() {
-  const instrumentationService = ServiceFactory.getInstrumentationService();
+  const instrumentationService = resolveDependency('IInstrumentationService');
   return await instrumentationService.instrumentServerAction(
     'signOut',
     { recordResponse: true },
@@ -112,6 +111,7 @@ export async function signOut() {
 
       let blankCookie: Cookie;
       try {
+        const signOutController = resolveDependency('ISignOutController');
         blankCookie = await signOutController(sessionId);
       } catch (err) {
         if (
@@ -120,7 +120,7 @@ export async function signOut() {
         ) {
           redirect('/sign-in');
         }
-        const crashReporterService = ServiceFactory.getCrashReporterService();
+        const crashReporterService = resolveDependency('ICrashReporterService');
         crashReporterService.report(err);
         throw err;
       }

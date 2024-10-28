@@ -6,13 +6,10 @@ import { cookies } from 'next/headers';
 import { SESSION_COOKIE } from '@/config';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
 import { InputParseError, NotFoundError } from '@/src/entities/errors/common';
-import { createTodoController } from '@/src/interface-adapters/controllers/todos/create-todo.controller';
-import { toggleTodoController } from '@/src/interface-adapters/controllers/todos/toggle-todo.controller';
-import { bulkUpdateController } from '@/src/interface-adapters/controllers/todos/bulk-update.controller';
-import { ServiceFactory } from '@/ioc/service-factory';
+import { resolveDependency } from '@/di/container';
 
 export async function createTodo(formData: FormData) {
-  const instrumentationService = ServiceFactory.getInstrumentationService();
+  const instrumentationService = resolveDependency('IInstrumentationService');
   return await instrumentationService.instrumentServerAction(
     'createTodo',
     { recordResponse: true },
@@ -20,6 +17,7 @@ export async function createTodo(formData: FormData) {
       try {
         const data = Object.fromEntries(formData.entries());
         const sessionId = cookies().get(SESSION_COOKIE)?.value;
+        const createTodoController = resolveDependency('ICreateTodoController');
         await createTodoController(data, sessionId);
       } catch (err) {
         if (err instanceof InputParseError) {
@@ -28,7 +26,7 @@ export async function createTodo(formData: FormData) {
         if (err instanceof UnauthenticatedError) {
           return { error: 'Must be logged in to create a todo' };
         }
-        const crashReporterService = ServiceFactory.getCrashReporterService();
+        const crashReporterService = resolveDependency('ICrashReporterService');
         crashReporterService.report(err);
         return {
           error:
@@ -43,13 +41,14 @@ export async function createTodo(formData: FormData) {
 }
 
 export async function toggleTodo(todoId: number) {
-  const instrumentationService = ServiceFactory.getInstrumentationService();
+  const instrumentationService = resolveDependency('IInstrumentationService');
   return await instrumentationService.instrumentServerAction(
     'toggleTodo',
     { recordResponse: true },
     async () => {
       try {
         const sessionId = cookies().get(SESSION_COOKIE)?.value;
+        const toggleTodoController = resolveDependency('IToggleTodoController');
         await toggleTodoController({ todoId }, sessionId);
       } catch (err) {
         if (err instanceof InputParseError) {
@@ -61,7 +60,7 @@ export async function toggleTodo(todoId: number) {
         if (err instanceof NotFoundError) {
           return { error: 'Todo does not exist' };
         }
-        const crashReporterService = ServiceFactory.getCrashReporterService();
+        const crashReporterService = resolveDependency('ICrashReporterService');
         crashReporterService.report(err);
         return {
           error:
@@ -76,13 +75,14 @@ export async function toggleTodo(todoId: number) {
 }
 
 export async function bulkUpdate(dirty: number[], deleted: number[]) {
-  const instrumentationService = ServiceFactory.getInstrumentationService();
+  const instrumentationService = resolveDependency('IInstrumentationService');
   return await instrumentationService.instrumentServerAction(
     'bulkUpdate',
     { recordResponse: true },
     async () => {
       try {
         const sessionId = cookies().get(SESSION_COOKIE)?.value;
+        const bulkUpdateController = resolveDependency('IBulkUpdateController');
         await bulkUpdateController({ dirty, deleted }, sessionId);
       } catch (err) {
         revalidatePath('/');
@@ -95,7 +95,7 @@ export async function bulkUpdate(dirty: number[], deleted: number[]) {
         if (err instanceof NotFoundError) {
           return { error: 'Todo does not exist' };
         }
-        const crashReporterService = ServiceFactory.getCrashReporterService();
+        const crashReporterService = resolveDependency('ICrashReporterService');
         crashReporterService.report(err);
         return {
           error:

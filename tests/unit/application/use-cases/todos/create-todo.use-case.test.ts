@@ -1,7 +1,9 @@
 import { expect, it } from 'vitest';
 
-import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
-import { createTodoUseCase } from '@/src/application/use-cases/todos/create-todo.use-case';
+import { resolveDependency } from '@/di/container';
+
+const signInUseCase = resolveDependency('ISignInUseCase');
+const createTodoUseCase = resolveDependency('ICreateTodoUseCase');
 
 // A great guide on test names
 // https://www.epicweb.dev/talks/how-to-write-better-test-names

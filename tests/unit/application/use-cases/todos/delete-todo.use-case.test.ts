@@ -1,12 +1,15 @@
 import { expect, it } from 'vitest';
 
-import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
-import { createTodoUseCase } from '@/src/application/use-cases/todos/create-todo.use-case';
-import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
+import { resolveDependency } from '@/di/container';
+
 import { UnauthorizedError } from '@/src/entities/errors/auth';
 import { NotFoundError } from '@/src/entities/errors/common';
-import { deleteTodoUseCase } from '@/src/application/use-cases/todos/delete-todo.use-case';
-import { getTodosForUserUseCase } from '@/src/application/use-cases/todos/get-todos-for-user.use-case';
+
+const signInUseCase = resolveDependency('ISignInUseCase');
+const createTodoUseCase = resolveDependency('ICreateTodoUseCase');
+const deleteTodoUseCase = resolveDependency('IDeleteTodoUseCase');
+const getTodosForUserUseCase = resolveDependency('IGetTodosForUserUseCase');
+const signOutUseCase = resolveDependency('ISignOutUseCase');
 // A great guide on test names
 // https://www.epicweb.dev/talks/how-to-write-better-test-names
 it('deletes todo', async () => {

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 import { InputParseError } from '@/src/entities/errors/common';
-import { ServiceFactory } from '@/ioc/service-factory';
+import { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
+import { ISignUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 
 const inputSchema = z
   .object({
@@ -25,19 +25,29 @@ const inputSchema = z
     }
   });
 
-export async function signUpController(
-  input: Partial<z.infer<typeof inputSchema>>
-): Promise<ReturnType<typeof signUpUseCase>> {
-  return await ServiceFactory.getInstrumentationService().startSpan(
-    { name: 'signUp Controller' },
-    async () => {
-      const { data, error: inputParseError } = inputSchema.safeParse(input);
+export type ISignUpController = ReturnType<typeof signUpController>;
 
-      if (inputParseError) {
-        throw new InputParseError('Invalid data', { cause: inputParseError });
+export const signUpController =
+  ({
+    instrumentationService,
+    signUpUseCase,
+  }: {
+    instrumentationService: IInstrumentationService;
+    signUpUseCase: ISignUpUseCase;
+  }) =>
+  async (
+    input: Partial<z.infer<typeof inputSchema>>
+  ): Promise<ReturnType<typeof signUpUseCase>> => {
+    return await instrumentationService.startSpan(
+      { name: 'signUp Controller' },
+      async () => {
+        const { data, error: inputParseError } = inputSchema.safeParse(input);
+
+        if (inputParseError) {
+          throw new InputParseError('Invalid data', { cause: inputParseError });
+        }
+
+        return await signUpUseCase(data);
       }
-
-      return await signUpUseCase(data);
-    }
-  );
-}
+    );
+  };

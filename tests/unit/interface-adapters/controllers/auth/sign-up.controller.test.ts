@@ -1,9 +1,11 @@
 import { expect, it } from 'vitest';
 
+import { resolveDependency } from '@/di/container';
 import { SESSION_COOKIE } from '@/config';
-import { signUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
 import { InputParseError } from '@/src/entities/errors/common';
 import { AuthenticationError } from '@/src/entities/errors/auth';
+
+const signUpController = resolveDependency('ISignUpController');
 
 // A great guide on test names
 // https://www.epicweb.dev/talks/how-to-write-better-test-names

@@ -2,7 +2,7 @@
   "extends": ["next/core-web-vitals"],
   "plugins": ["boundaries"],
   "settings": {
-    "boundaries/include": ["src/**/*", "app/**/*", "ioc/*"],
+    "boundaries/include": ["src/**/*", "app/**/*", "di/**/*"],
     "boundaries/elements": [
       {
         "mode": "full",
@@ -11,8 +11,8 @@
       },
       {
         "mode": "full",
-        "type": "interface-adapters",
-        "pattern": ["src/interface-adapters/**/*"]
+        "type": "controllers",
+        "pattern": ["src/interface-adapters/controllers/**/*"]
       },
       {
         "mode": "full",
@@ -41,8 +41,8 @@
       },
       {
         "mode": "full",
-        "type": "ioc",
-        "pattern": ["ioc/*"]
+        "type": "di",
+        "pattern": ["di/**/*"]
       }
     ]
   },
@@ -56,11 +56,16 @@
         "rules": [
           {
             "from": "web",
-            "allow": ["web", "interface-adapters", "entities", "ioc"]
+            "allow": ["web", "entities", "di"]
           },
           {
-            "from": "interface-adapters",
-            "allow": ["use-cases", "entities", "ioc"]
+            "from": "controllers",
+            "allow": [
+              "entities",
+              "service-interfaces",
+              "repository-interfaces",
+              "use-cases"
+            ]
           },
           {
             "from": "infrastructure",
@@ -68,7 +73,7 @@
           },
           {
             "from": "use-cases",
-            "allow": ["entities", "ioc"]
+            "allow": ["entities", "service-interfaces", "repository-interfaces"]
           },
           {
             "from": "service-interfaces",
@@ -83,11 +88,13 @@
             "allow": ["entities"]
           },
           {
-            "from": "ioc",
+            "from": "di",
             "allow": [
-              "ioc",
+              "di",
+              "controllers",
               "service-interfaces",
               "repository-interfaces",
+              "use-cases",
               "infrastructure"
             ]
           }
