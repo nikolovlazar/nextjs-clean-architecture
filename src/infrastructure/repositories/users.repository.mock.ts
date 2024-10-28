@@ -1,6 +1,8 @@
+import { hashSync } from 'bcrypt-ts';
+
 import { IUsersRepository } from '@/src/application/repositories/users.repository.interface';
 import { User } from '@/src/entities/models/user';
-import { hashSync } from '@node-rs/argon2';
+import { PASSWORD_SALT_ROUNDS } from '@/config';
 
 export class MockUsersRepository implements IUsersRepository {
   private _users: User[];
@@ -17,17 +19,17 @@ export class MockUsersRepository implements IUsersRepository {
       {
         id: '1',
         username: 'one',
-        password_hash: hashSync('password-one', hashOptions),
+        password_hash: hashSync('password-one', PASSWORD_SALT_ROUNDS),
       },
       {
         id: '2',
         username: 'two',
-        password_hash: hashSync('password-two', hashOptions),
+        password_hash: hashSync('password-two', PASSWORD_SALT_ROUNDS),
       },
       {
         id: '3',
         username: 'three',
-        password_hash: hashSync('password-three', hashOptions),
+        password_hash: hashSync('password-three', PASSWORD_SALT_ROUNDS),
       },
     ];
   }

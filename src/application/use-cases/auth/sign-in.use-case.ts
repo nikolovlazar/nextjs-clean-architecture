@@ -1,5 +1,4 @@
-import { verify } from '@node-rs/argon2';
-
+import { compare } from 'bcrypt-ts';
 import { AuthenticationError } from '@/src/entities/errors/auth';
 import { Cookie } from '@/src/entities/models/cookie';
 import { Session } from '@/src/entities/models/session';
@@ -34,16 +33,15 @@ export const signInUseCase =
           throw new AuthenticationError('User does not exist');
         }
 
-        const validPassword = await instrumentationService.startSpan(
-          { name: 'verify password hash', op: 'function' },
-          () =>
-            verify(existingUser.password_hash, input.password, {
-              memoryCost: 19456,
-              timeCost: 2,
-              outputLen: 32,
-              parallelism: 1,
-            })
-        );
+        let validPassword = false;
+        try {
+          validPassword = await instrumentationService.startSpan(
+            { name: 'verify password hash', op: 'function' },
+            () => compare(input.password, existingUser.password_hash)
+          );
+        } catch (err) {
+          console.error('password hash comparison error', err);
+        }
 
         if (!validPassword) {
           throw new AuthenticationError('Incorrect username or password');

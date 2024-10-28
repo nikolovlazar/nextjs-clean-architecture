@@ -38,6 +38,11 @@ export async function signUp(formData: FormData) {
               'Invalid data. Make sure the Password and Confirm Password match.',
           };
         }
+        if (err instanceof AuthenticationError) {
+          return {
+            error: err.message,
+          };
+        }
         const crashReporterService = resolveDependency('ICrashReporterService');
         crashReporterService.report(err);
 
