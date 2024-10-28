@@ -37,7 +37,6 @@ Clean Architecture achieves this through defining a _dependency hierarchy_ - lay
   - `infrastructure` - **Infrastructure Layer** - holds implementations of repositories and services, and pulls in the interfaces from `application`
   - `interface-adapters` - **Interface Adapters Layer** - holds controllers that serve as an entry point to the system (used in Frameworks & Drivers layer to interact with the system)
 - `tests` - Unit tests live here - the `unit` subfolder's structure matches `src`
-- `next.config.mjs` - Next.js configuration
 - `vitest.config.ts` - Take note of how the `@` alias is defined!
 
 ## Layers explanation
