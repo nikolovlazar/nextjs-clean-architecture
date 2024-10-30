@@ -30,15 +30,10 @@ export const signInUseCase =
           throw new AuthenticationError('User does not exist');
         }
 
-        let validPassword = false;
-        try {
-          validPassword = await instrumentationService.startSpan(
-            { name: 'verify password hash', op: 'function' },
-            () => compare(input.password, existingUser.password_hash)
-          );
-        } catch (err) {
-          console.error('password hash comparison error', err);
-        }
+        const validPassword = await instrumentationService.startSpan(
+          { name: 'verify password hash', op: 'function' },
+          () => compare(input.password, existingUser.password_hash)
+        );
 
         if (!validPassword) {
           throw new AuthenticationError('Incorrect username or password');

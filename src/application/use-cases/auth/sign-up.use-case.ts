@@ -35,18 +35,10 @@ export const signUpUseCase =
           throw new AuthenticationError('Username taken');
         }
 
-        let passwordHash = '';
-        try {
-          passwordHash = await instrumentationService.startSpan(
-            { name: 'hash password', op: 'function' },
-            () => hash(input.password, PASSWORD_SALT_ROUNDS)
-          );
-        } catch (err) {
-          console.error('password hash error', err);
-          throw new AuthenticationError('Failed to hash password', {
-            cause: err,
-          });
-        }
+        const passwordHash = await instrumentationService.startSpan(
+          { name: 'hash password', op: 'function' },
+          () => hash(input.password, PASSWORD_SALT_ROUNDS)
+        );
 
         const userId = authenticationService.generateUserId();
 
