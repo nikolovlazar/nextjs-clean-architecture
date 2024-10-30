@@ -5,7 +5,7 @@ import { registerAuthenticationModule } from '@/di/modules/authentication.module
 import { registerTransactionManagerModule } from '@/di/modules/database.module';
 import { registerTodosModule } from '@/di/modules/todos.module';
 import { registerUsersModule } from '@/di/modules/users.module';
-import { DI_TYPES, DI } from '@/di/types';
+import { DI_RETURN_TYPES, DI_SYMBOLS } from '@/di/types';
 
 const container: Container = createContainer();
 
@@ -15,6 +15,8 @@ registerAuthenticationModule(container);
 registerUsersModule(container);
 registerTodosModule(container);
 
-export function getInjection<T extends keyof DI_TYPES>(key: T): DI_TYPES[T] {
-  return container.get<DI_TYPES[T]>(DI[key]);
+export function getInjection<T extends keyof DI_RETURN_TYPES>(
+  key: T
+): DI_RETURN_TYPES[T] {
+  return container.get<DI_RETURN_TYPES[T]>(DI_SYMBOLS[key]);
 }

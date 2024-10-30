@@ -7,34 +7,40 @@ import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case
 import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
 
-import { DI } from '@/di/types';
+import { DI_SYMBOLS } from '@/di/types';
 
 export function registerUsersModule(container: Container) {
   if (process.env.NODE_ENV === 'test') {
-    container.bind(DI.IUsersRepository).toClass(MockUsersRepository);
+    container.bind(DI_SYMBOLS.IUsersRepository).toClass(MockUsersRepository);
   } else {
     container
-      .bind(DI.IUsersRepository)
+      .bind(DI_SYMBOLS.IUsersRepository)
       .toClass(UsersRepository, [
-        DI.IInstrumentationService,
-        DI.ICrashReporterService,
+        DI_SYMBOLS.IInstrumentationService,
+        DI_SYMBOLS.ICrashReporterService,
       ]);
   }
 
-  container.bind(DI.ISignInUseCase).toHigherOrderFunction(signInUseCase, {
-    instrumentationService: DI.IInstrumentationService,
-    authenticationService: DI.IAuthenticationService,
-    usersRepository: DI.IUsersRepository,
-  });
+  container
+    .bind(DI_SYMBOLS.ISignInUseCase)
+    .toHigherOrderFunction(signInUseCase, {
+      instrumentationService: DI_SYMBOLS.IInstrumentationService,
+      authenticationService: DI_SYMBOLS.IAuthenticationService,
+      usersRepository: DI_SYMBOLS.IUsersRepository,
+    });
 
-  container.bind(DI.ISignOutUseCase).toHigherOrderFunction(signOutUseCase, {
-    instrumentationService: DI.IInstrumentationService,
-    authenticationService: DI.IAuthenticationService,
-  });
+  container
+    .bind(DI_SYMBOLS.ISignOutUseCase)
+    .toHigherOrderFunction(signOutUseCase, {
+      instrumentationService: DI_SYMBOLS.IInstrumentationService,
+      authenticationService: DI_SYMBOLS.IAuthenticationService,
+    });
 
-  container.bind(DI.ISignUpUseCase).toHigherOrderFunction(signUpUseCase, {
-    instrumentationService: DI.IInstrumentationService,
-    authenticationService: DI.IAuthenticationService,
-    usersRepository: DI.IUsersRepository,
-  });
+  container
+    .bind(DI_SYMBOLS.ISignUpUseCase)
+    .toHigherOrderFunction(signUpUseCase, {
+      instrumentationService: DI_SYMBOLS.IInstrumentationService,
+      authenticationService: DI_SYMBOLS.IAuthenticationService,
+      usersRepository: DI_SYMBOLS.IUsersRepository,
+    });
 }

@@ -7,37 +7,41 @@ import { signInController } from '@/src/interface-adapters/controllers/auth/sign
 import { signOutController } from '@/src/interface-adapters/controllers/auth/sign-out.controller';
 import { signUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
 
-import { DI } from '@/di/types';
+import { DI_SYMBOLS } from '@/di/types';
 
 export function registerAuthenticationModule(container: Container) {
   if (process.env.NODE_ENV === 'test') {
     container
-      .bind(DI.IAuthenticationService)
-      .toClass(MockAuthenticationService, [DI.IUsersRepository]);
+      .bind(DI_SYMBOLS.IAuthenticationService)
+      .toClass(MockAuthenticationService, [DI_SYMBOLS.IUsersRepository]);
   } else {
     container
-      .bind(DI.IAuthenticationService)
+      .bind(DI_SYMBOLS.IAuthenticationService)
       .toClass(AuthenticationService, [
-        DI.IUsersRepository,
-        DI.IInstrumentationService,
+        DI_SYMBOLS.IUsersRepository,
+        DI_SYMBOLS.IInstrumentationService,
       ]);
   }
 
-  container.bind(DI.ISignInController).toHigherOrderFunction(signInController, {
-    instrumentationService: DI.IInstrumentationService,
-    signInUseCase: DI.ISignInUseCase,
-  });
-
   container
-    .bind(DI.ISignOutController)
-    .toHigherOrderFunction(signOutController, {
-      instrumentationService: DI.IInstrumentationService,
-      authenticationService: DI.IAuthenticationService,
-      signOutUseCase: DI.ISignOutUseCase,
+    .bind(DI_SYMBOLS.ISignInController)
+    .toHigherOrderFunction(signInController, {
+      instrumentationService: DI_SYMBOLS.IInstrumentationService,
+      signInUseCase: DI_SYMBOLS.ISignInUseCase,
     });
 
-  container.bind(DI.ISignUpController).toHigherOrderFunction(signUpController, {
-    instrumentationService: DI.IInstrumentationService,
-    signUpUseCase: DI.ISignUpUseCase,
-  });
+  container
+    .bind(DI_SYMBOLS.ISignOutController)
+    .toHigherOrderFunction(signOutController, {
+      instrumentationService: DI_SYMBOLS.IInstrumentationService,
+      authenticationService: DI_SYMBOLS.IAuthenticationService,
+      signOutUseCase: DI_SYMBOLS.ISignOutUseCase,
+    });
+
+  container
+    .bind(DI_SYMBOLS.ISignUpController)
+    .toHigherOrderFunction(signUpController, {
+      instrumentationService: DI_SYMBOLS.IInstrumentationService,
+      signUpUseCase: DI_SYMBOLS.ISignUpUseCase,
+    });
 }

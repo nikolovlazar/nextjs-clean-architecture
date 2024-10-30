@@ -22,7 +22,7 @@ import { ICreateTodoController } from '@/src/interface-adapters/controllers/todo
 import { IGetTodosForUserController } from '@/src/interface-adapters/controllers/todos/get-todos-for-user.controller';
 import { IToggleTodoController } from '@/src/interface-adapters/controllers/todos/toggle-todo.controller';
 
-export const DI = {
+export const DI_SYMBOLS = {
   // Services
   IAuthenticationService: Symbol.for('IAuthenticationService'),
   ITransactionManagerService: Symbol.for('ITransactionManagerService'),
@@ -52,7 +52,7 @@ export const DI = {
   IToggleTodoController: Symbol.for('IToggleTodoController'),
 };
 
-export type DI_TYPES = {
+export type DI_RETURN_TYPES = {
   // Services
   IAuthenticationService: IAuthenticationService;
   ITransactionManagerService: ITransactionManagerService;
