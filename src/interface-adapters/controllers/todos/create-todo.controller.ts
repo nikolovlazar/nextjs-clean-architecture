@@ -33,8 +33,8 @@ export const createTodoController =
   (
     instrumentationService: IInstrumentationService,
     authenticationService: IAuthenticationService,
-    createTodoUseCase: ICreateTodoUseCase,
-    transactionManagerService: ITransactionManagerService
+    transactionManagerService: ITransactionManagerService,
+    createTodoUseCase: ICreateTodoUseCase
   ) =>
   async (
     input: Partial<z.infer<typeof inputSchema>>,

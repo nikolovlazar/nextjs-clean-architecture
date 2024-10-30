@@ -29,8 +29,8 @@ export type IToggleTodoController = ReturnType<typeof toggleTodoController>;
 export const toggleTodoController =
   (
     instrumentationService: IInstrumentationService,
-    toggleTodoUseCase: IToggleTodoUseCase,
-    authenticationService: IAuthenticationService
+    authenticationService: IAuthenticationService,
+    toggleTodoUseCase: IToggleTodoUseCase
   ) =>
   async (
     input: Partial<z.infer<typeof inputSchema>>,

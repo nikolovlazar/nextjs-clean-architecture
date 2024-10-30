@@ -27,8 +27,8 @@ export type IGetTodosForUserController = ReturnType<
 export const getTodosForUserController =
   (
     instrumentationService: IInstrumentationService,
-    getTodosForUserUseCase: IGetTodosForUserUseCase,
-    authenticationService: IAuthenticationService
+    authenticationService: IAuthenticationService,
+    getTodosForUserUseCase: IGetTodosForUserUseCase
   ) =>
   async (
     sessionId: string | undefined

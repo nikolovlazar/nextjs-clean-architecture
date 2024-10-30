@@ -78,15 +78,15 @@ export function registerTodosModule(container: Container) {
     .bind(DI_SYMBOLS.IGetTodosForUserController)
     .toHigherOrderFunction(getTodosForUserController, [
       DI_SYMBOLS.IInstrumentationService,
-      DI_SYMBOLS.IGetTodosForUserUseCase,
       DI_SYMBOLS.IAuthenticationService,
+      DI_SYMBOLS.IGetTodosForUserUseCase,
     ]);
 
   container
     .bind(DI_SYMBOLS.IToggleTodoController)
     .toHigherOrderFunction(toggleTodoController, [
       DI_SYMBOLS.IInstrumentationService,
-      DI_SYMBOLS.IToggleTodoUseCase,
       DI_SYMBOLS.IAuthenticationService,
+      DI_SYMBOLS.IToggleTodoUseCase,
     ]);
 }
