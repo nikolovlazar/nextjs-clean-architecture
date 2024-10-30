@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
+import Link from 'next/link';
+import { useState } from 'react';
 
-import { Button } from "../../_components/ui/button";
+import { Button } from '../../_components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../_components/ui/card";
-import { Input } from "../../_components/ui/input";
-import { Label } from "../../_components/ui/label";
-import { Separator } from "../../_components/ui/separator";
-import { signUp } from "../actions";
+} from '../../_components/ui/card';
+import { Input } from '../../_components/ui/input';
+import { Label } from '../../_components/ui/label';
+import { Separator } from '../../_components/ui/separator';
+import { signUp } from '../actions';
 
 export default function SignUp() {
   const [error, setError] = useState<string>();
@@ -24,11 +24,11 @@ export default function SignUp() {
 
     const formData = new FormData(event.currentTarget);
 
-    const password = formData.get("password")!.toString();
-    const confirmPassword = formData.get("confirm_password")!.toString();
+    const password = formData.get('password')!.toString();
+    const confirmPassword = formData.get('confirm_password')!.toString();
 
     if (password !== confirmPassword) {
-      setError("Passwords must match");
+      setError('Passwords must match');
       return;
     }
 
@@ -79,7 +79,7 @@ export default function SignUp() {
             </Button>
           </div>
           <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Link href="/sign-in" className="underline">
               Sign in
             </Link>

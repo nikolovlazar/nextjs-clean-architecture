@@ -60,9 +60,8 @@ export const signUpUseCase =
           password_hash: passwordHash,
         });
 
-        const { cookie, session } = await authenticationService.createSession(
-          newUser
-        );
+        const { cookie, session } =
+          await authenticationService.createSession(newUser);
 
         return {
           cookie,

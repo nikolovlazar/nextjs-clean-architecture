@@ -1,35 +1,35 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import { SESSION_COOKIE } from "@/config";
+import { SESSION_COOKIE } from '@/config';
 import {
   AuthenticationError,
   UnauthenticatedError,
-} from "@/src/entities/errors/auth";
-import { Todo } from "@/src/entities/models/todo";
+} from '@/src/entities/errors/auth';
+import { Todo } from '@/src/entities/models/todo';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "./_components/ui/card";
-import { Separator } from "./_components/ui/separator";
-import { UserMenu } from "./_components/ui/user-menu";
-import { CreateTodo } from "./add-todo";
-import { Todos } from "./todos";
-import { getInjection } from "@/di/container";
+} from './_components/ui/card';
+import { Separator } from './_components/ui/separator';
+import { UserMenu } from './_components/ui/user-menu';
+import { CreateTodo } from './add-todo';
+import { Todos } from './todos';
+import { getInjection } from '@/di/container';
 
 async function getTodos(sessionId: string | undefined) {
-  const instrumentationService = getInjection("IInstrumentationService");
+  const instrumentationService = getInjection('IInstrumentationService');
   return await instrumentationService.startSpan(
     {
-      name: "getTodos",
-      op: "function.nextjs",
+      name: 'getTodos',
+      op: 'function.nextjs',
     },
     async () => {
       try {
         const getTodosForUserController = getInjection(
-          "IGetTodosForUserController",
+          'IGetTodosForUserController'
         );
         return await getTodosForUserController(sessionId);
       } catch (err) {
@@ -37,13 +37,13 @@ async function getTodos(sessionId: string | undefined) {
           err instanceof UnauthenticatedError ||
           err instanceof AuthenticationError
         ) {
-          redirect("/sign-in");
+          redirect('/sign-in');
         }
-        const crashReporterService = getInjection("ICrashReporterService");
+        const crashReporterService = getInjection('ICrashReporterService');
         crashReporterService.report(err);
         throw err;
       }
-    },
+    }
   );
 }
 

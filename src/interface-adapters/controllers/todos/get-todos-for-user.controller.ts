@@ -44,9 +44,8 @@ export const getTodosForUserController =
           throw new UnauthenticatedError('Must be logged in to create a todo');
         }
 
-        const { session } = await authenticationService.validateSession(
-          sessionId
-        );
+        const { session } =
+          await authenticationService.validateSession(sessionId);
 
         const todos = await getTodosForUserUseCase(session.userId);
 

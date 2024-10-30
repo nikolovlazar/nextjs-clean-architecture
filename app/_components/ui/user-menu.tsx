@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { signOut } from "@/app/(auth)/actions";
-import { Avatar, AvatarFallback } from "./avatar";
+import { signOut } from '@/app/(auth)/actions';
+import { Avatar, AvatarFallback } from './avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./dropdown-menu";
+} from './dropdown-menu';
 
 export function UserMenu() {
   return (

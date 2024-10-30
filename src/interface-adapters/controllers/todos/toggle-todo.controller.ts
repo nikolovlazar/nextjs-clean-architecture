@@ -47,9 +47,8 @@ export const toggleTodoController =
           throw new UnauthenticatedError('Must be logged in to create a todo');
         }
 
-        const { session } = await authenticationService.validateSession(
-          sessionId
-        );
+        const { session } =
+          await authenticationService.validateSession(sessionId);
 
         const { data, error: inputParseError } = inputSchema.safeParse(input);
 

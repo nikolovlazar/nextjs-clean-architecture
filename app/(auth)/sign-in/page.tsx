@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import Link from "next/link";
-import { Button } from "../../_components/ui/button";
+import Link from 'next/link';
+import { Button } from '../../_components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../_components/ui/card";
-import { Input } from "../../_components/ui/input";
-import { Label } from "../../_components/ui/label";
-import { Separator } from "../../_components/ui/separator";
-import { signIn } from "../actions";
+} from '../../_components/ui/card';
+import { Input } from '../../_components/ui/input';
+import { Label } from '../../_components/ui/label';
+import { Separator } from '../../_components/ui/separator';
+import { signIn } from '../actions';
 
 export default function SignIn() {
   const [error, setError] = useState<string>();
@@ -62,7 +62,7 @@ export default function SignIn() {
             </Button>
           </div>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+            Don&apos;t have an account?{' '}
             <Link href="/sign-up" className="underline">
               Sign up
             </Link>

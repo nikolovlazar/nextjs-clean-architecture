@@ -1,22 +1,22 @@
-import { Container } from "@evyweb/ioctopus";
+import { Container } from '@evyweb/ioctopus';
 
-import { MockTodosRepository } from "@/src/infrastructure/repositories/todos.repository.mock";
-import { TodosRepository } from "@/src/infrastructure/repositories/todos.repository";
+import { MockTodosRepository } from '@/src/infrastructure/repositories/todos.repository.mock';
+import { TodosRepository } from '@/src/infrastructure/repositories/todos.repository';
 
-import { createTodoUseCase } from "@/src/application/use-cases/todos/create-todo.use-case";
-import { deleteTodoUseCase } from "@/src/application/use-cases/todos/delete-todo.use-case";
-import { getTodosForUserUseCase } from "@/src/application/use-cases/todos/get-todos-for-user.use-case";
-import { toggleTodoUseCase } from "@/src/application/use-cases/todos/toggle-todo.use-case";
+import { createTodoUseCase } from '@/src/application/use-cases/todos/create-todo.use-case';
+import { deleteTodoUseCase } from '@/src/application/use-cases/todos/delete-todo.use-case';
+import { getTodosForUserUseCase } from '@/src/application/use-cases/todos/get-todos-for-user.use-case';
+import { toggleTodoUseCase } from '@/src/application/use-cases/todos/toggle-todo.use-case';
 
-import { bulkUpdateController } from "@/src/interface-adapters/controllers/todos/bulk-update.controller";
-import { createTodoController } from "@/src/interface-adapters/controllers/todos/create-todo.controller";
-import { getTodosForUserController } from "@/src/interface-adapters/controllers/todos/get-todos-for-user.controller";
-import { toggleTodoController } from "@/src/interface-adapters/controllers/todos/toggle-todo.controller";
+import { bulkUpdateController } from '@/src/interface-adapters/controllers/todos/bulk-update.controller';
+import { createTodoController } from '@/src/interface-adapters/controllers/todos/create-todo.controller';
+import { getTodosForUserController } from '@/src/interface-adapters/controllers/todos/get-todos-for-user.controller';
+import { toggleTodoController } from '@/src/interface-adapters/controllers/todos/toggle-todo.controller';
 
-import { DI } from "@/di/types";
+import { DI } from '@/di/types';
 
 export function registerTodosModule(container: Container) {
-  if (process.env.NODE_ENV === "test") {
+  if (process.env.NODE_ENV === 'test') {
     container.bind(DI.ITodosRepository).toClass(MockTodosRepository);
   } else {
     container
