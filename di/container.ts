@@ -18,9 +18,9 @@ registerAuthenticationModule(ApplicationContainer);
 registerUsersModule(ApplicationContainer);
 registerTodosModule(ApplicationContainer);
 
-export function getInjection<T extends keyof typeof DI_SYMBOLS>(
-  symbol: T
-): DI_RETURN_TYPES[T] {
+export function getInjection<K extends keyof typeof DI_SYMBOLS>(
+  symbol: K
+): DI_RETURN_TYPES[K] {
   const instrumentationService =
     ApplicationContainer.get<IInstrumentationService>(
       DI_SYMBOLS.IInstrumentationService
