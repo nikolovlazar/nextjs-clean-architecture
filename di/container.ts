@@ -15,8 +15,6 @@ registerAuthenticationModule(container);
 registerUsersModule(container);
 registerTodosModule(container);
 
-export function resolveDependency<T extends keyof DI_TYPES>(
-  key: T,
-): DI_TYPES[T] {
+export function getInjection<T extends keyof DI_TYPES>(key: T): DI_TYPES[T] {
   return container.get<DI_TYPES[T]>(DI[key]);
 }

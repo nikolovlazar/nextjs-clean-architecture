@@ -1,110 +1,110 @@
-'use server';
+"use server";
 
-import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
-import { SESSION_COOKIE } from '@/config';
-import { UnauthenticatedError } from '@/src/entities/errors/auth';
-import { InputParseError, NotFoundError } from '@/src/entities/errors/common';
-import { resolveDependency } from '@/di/container';
+import { SESSION_COOKIE } from "@/config";
+import { UnauthenticatedError } from "@/src/entities/errors/auth";
+import { InputParseError, NotFoundError } from "@/src/entities/errors/common";
+import { getInjection } from "@/di/container";
 
 export async function createTodo(formData: FormData) {
-  const instrumentationService = resolveDependency('IInstrumentationService');
+  const instrumentationService = getInjection("IInstrumentationService");
   return await instrumentationService.instrumentServerAction(
-    'createTodo',
+    "createTodo",
     { recordResponse: true },
     async () => {
       try {
         const data = Object.fromEntries(formData.entries());
         const sessionId = cookies().get(SESSION_COOKIE)?.value;
-        const createTodoController = resolveDependency('ICreateTodoController');
+        const createTodoController = getInjection("ICreateTodoController");
         await createTodoController(data, sessionId);
       } catch (err) {
         if (err instanceof InputParseError) {
           return { error: err.message };
         }
         if (err instanceof UnauthenticatedError) {
-          return { error: 'Must be logged in to create a todo' };
+          return { error: "Must be logged in to create a todo" };
         }
-        const crashReporterService = resolveDependency('ICrashReporterService');
+        const crashReporterService = getInjection("ICrashReporterService");
         crashReporterService.report(err);
         return {
           error:
-            'An error happened while creating a todo. The developers have been notified. Please try again later.',
+            "An error happened while creating a todo. The developers have been notified. Please try again later.",
         };
       }
 
-      revalidatePath('/');
+      revalidatePath("/");
       return { success: true };
-    }
+    },
   );
 }
 
 export async function toggleTodo(todoId: number) {
-  const instrumentationService = resolveDependency('IInstrumentationService');
+  const instrumentationService = getInjection("IInstrumentationService");
   return await instrumentationService.instrumentServerAction(
-    'toggleTodo',
+    "toggleTodo",
     { recordResponse: true },
     async () => {
       try {
         const sessionId = cookies().get(SESSION_COOKIE)?.value;
-        const toggleTodoController = resolveDependency('IToggleTodoController');
+        const toggleTodoController = getInjection("IToggleTodoController");
         await toggleTodoController({ todoId }, sessionId);
       } catch (err) {
         if (err instanceof InputParseError) {
           return { error: err.message };
         }
         if (err instanceof UnauthenticatedError) {
-          return { error: 'Must be logged in to create a todo' };
+          return { error: "Must be logged in to create a todo" };
         }
         if (err instanceof NotFoundError) {
-          return { error: 'Todo does not exist' };
+          return { error: "Todo does not exist" };
         }
-        const crashReporterService = resolveDependency('ICrashReporterService');
+        const crashReporterService = getInjection("ICrashReporterService");
         crashReporterService.report(err);
         return {
           error:
-            'An error happened while toggling the todo. The developers have been notified. Please try again later.',
+            "An error happened while toggling the todo. The developers have been notified. Please try again later.",
         };
       }
 
-      revalidatePath('/');
+      revalidatePath("/");
       return { success: true };
-    }
+    },
   );
 }
 
 export async function bulkUpdate(dirty: number[], deleted: number[]) {
-  const instrumentationService = resolveDependency('IInstrumentationService');
+  const instrumentationService = getInjection("IInstrumentationService");
   return await instrumentationService.instrumentServerAction(
-    'bulkUpdate',
+    "bulkUpdate",
     { recordResponse: true },
     async () => {
       try {
         const sessionId = cookies().get(SESSION_COOKIE)?.value;
-        const bulkUpdateController = resolveDependency('IBulkUpdateController');
+        const bulkUpdateController = getInjection("IBulkUpdateController");
         await bulkUpdateController({ dirty, deleted }, sessionId);
       } catch (err) {
-        revalidatePath('/');
+        revalidatePath("/");
         if (err instanceof InputParseError) {
           return { error: err.message };
         }
         if (err instanceof UnauthenticatedError) {
-          return { error: 'Must be logged in to bulk update todos' };
+          return { error: "Must be logged in to bulk update todos" };
         }
         if (err instanceof NotFoundError) {
-          return { error: 'Todo does not exist' };
+          return { error: "Todo does not exist" };
         }
-        const crashReporterService = resolveDependency('ICrashReporterService');
+        const crashReporterService = getInjection("ICrashReporterService");
         crashReporterService.report(err);
         return {
           error:
-            'An error happened while bulk updating the todos. The developers have been notified. Please try again later.',
+            "An error happened while bulk updating the todos. The developers have been notified. Please try again later.",
         };
       }
 
-      revalidatePath('/');
+      revalidatePath("/");
       return { success: true };
-    }
+    },
   );
 }
