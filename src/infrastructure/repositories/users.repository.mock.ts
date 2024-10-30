@@ -8,13 +8,6 @@ export class MockUsersRepository implements IUsersRepository {
   private _users: User[];
 
   constructor() {
-    const hashOptions = {
-      memoryCost: 19456,
-      timeCost: 2,
-      outputLen: 32,
-      parallelism: 1,
-    };
-
     this._users = [
       {
         id: '1',

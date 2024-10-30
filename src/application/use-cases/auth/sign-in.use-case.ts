@@ -1,4 +1,5 @@
 import { compare } from 'bcrypt-ts';
+
 import { AuthenticationError } from '@/src/entities/errors/auth';
 import { Cookie } from '@/src/entities/models/cookie';
 import { Session } from '@/src/entities/models/session';

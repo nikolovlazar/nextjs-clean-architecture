@@ -1,10 +1,10 @@
 import { Container, createContainer } from '@evyweb/ioctopus';
 
-import { registerMonitoringModule } from '@/di/modules/monitoring';
-import { registerAuthenticationModule } from '@/di/modules/authentication';
-import { registerTransactionManagerModule } from '@/di/modules/transaction-manager';
-import { registerTodosModule } from '@/di/modules/todos';
-import { registerUsersModule } from '@/di/modules/users';
+import { registerMonitoringModule } from '@/di/modules/monitoring.module';
+import { registerAuthenticationModule } from '@/di/modules/authentication.module';
+import { registerTransactionManagerModule } from '@/di/modules/database.module';
+import { registerTodosModule } from '@/di/modules/todos.module';
+import { registerUsersModule } from '@/di/modules/users.module';
 import { DI_TYPES, DI } from '@/di/types';
 
 const container: Container = createContainer();
