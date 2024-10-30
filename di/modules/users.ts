@@ -1,16 +1,16 @@
-import { Container } from '@evyweb/ioctopus';
+import { Container } from "@evyweb/ioctopus";
 
-import { MockUsersRepository } from '@/src/infrastructure/repositories/users.repository.mock';
-import { UsersRepository } from '@/src/infrastructure/repositories/users.repository';
+import { MockUsersRepository } from "@/src/infrastructure/repositories/users.repository.mock";
+import { UsersRepository } from "@/src/infrastructure/repositories/users.repository";
 
-import { signInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
-import { signUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
-import { signOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
+import { signInUseCase } from "@/src/application/use-cases/auth/sign-in.use-case";
+import { signUpUseCase } from "@/src/application/use-cases/auth/sign-up.use-case";
+import { signOutUseCase } from "@/src/application/use-cases/auth/sign-out.use-case";
 
-import { DI } from '@/di/container';
+import { DI } from "@/di/types";
 
 export function registerUsersModule(container: Container) {
-  if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === "test") {
     container.bind(DI.IUsersRepository).toClass(MockUsersRepository);
   } else {
     container
