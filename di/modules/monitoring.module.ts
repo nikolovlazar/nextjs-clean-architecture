@@ -1,30 +1,26 @@
-import { ContainerModule, interfaces } from 'inversify';
+import { Container } from '@evyweb/ioctopus';
 
-import { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
-import { ICrashReporterService } from '@/src/application/services/crash-reporter.service.interface';
 import { MockInstrumentationService } from '@/src/infrastructure/services/instrumentation.service.mock';
-import { MockCrashReporterService } from '@/src/infrastructure/services/crash-reporter.service.mock';
 import { InstrumentationService } from '@/src/infrastructure/services/instrumentation.service';
+import { MockCrashReporterService } from '@/src/infrastructure/services/crash-reporter.service.mock';
 import { CrashReporterService } from '@/src/infrastructure/services/crash-reporter.service';
 
-import { DI_SYMBOLS } from '../types';
+import { DI_SYMBOLS } from '@/di/types';
 
-const initializeModule = (bind: interfaces.Bind) => {
+export function registerMonitoringModule(container: Container) {
   if (process.env.NODE_ENV === 'test') {
-    bind<IInstrumentationService>(DI_SYMBOLS.IInstrumentationService).to(
-      MockInstrumentationService
-    );
-    bind<ICrashReporterService>(DI_SYMBOLS.ICrashReporterService).to(
-      MockCrashReporterService
-    );
+    container
+      .bind(DI_SYMBOLS.IInstrumentationService)
+      .toClass(MockInstrumentationService);
+    container
+      .bind(DI_SYMBOLS.ICrashReporterService)
+      .toClass(MockCrashReporterService);
   } else {
-    bind<IInstrumentationService>(DI_SYMBOLS.IInstrumentationService).to(
-      InstrumentationService
-    );
-    bind<ICrashReporterService>(DI_SYMBOLS.ICrashReporterService).to(
-      CrashReporterService
-    );
+    container
+      .bind(DI_SYMBOLS.IInstrumentationService)
+      .toClass(InstrumentationService);
+    container
+      .bind(DI_SYMBOLS.ICrashReporterService)
+      .toClass(CrashReporterService);
   }
-};
-
-export const MonitoringModule = new ContainerModule(initializeModule);
+}

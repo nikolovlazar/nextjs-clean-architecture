@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Plus } from "lucide-react";
-import { useRef } from "react";
-import { toast } from "sonner";
+import { Plus } from 'lucide-react';
+import { useRef } from 'react';
+import { toast } from 'sonner';
 
-import { Button } from "./_components/ui/button";
-import { Input } from "./_components/ui/input";
-import { createTodo } from "./actions";
+import { Button } from './_components/ui/button';
+import { Input } from './_components/ui/input';
+import { createTodo } from './actions';
 
 export function CreateTodo() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -21,10 +21,10 @@ export function CreateTodo() {
       if (res.error) {
         toast.error(res.error);
       } else if (res.success) {
-        toast.success("Todo(s) created!");
+        toast.success('Todo(s) created!');
 
         if (inputRef.current) {
-          inputRef.current.value = "";
+          inputRef.current.value = '';
         }
       }
     }

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useCallback, useState } from "react";
-import { Trash } from "lucide-react";
-import { toast } from "sonner";
+import { useCallback, useState } from 'react';
+import { Trash } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { Checkbox } from "./_components/ui/checkbox";
-import { cn } from "./_components/utils";
-import { bulkUpdate, toggleTodo } from "./actions";
-import { Button } from "./_components/ui/button";
+import { Checkbox } from './_components/ui/checkbox';
+import { cn } from './_components/utils';
+import { bulkUpdate, toggleTodo } from './actions';
+import { Button } from './_components/ui/button';
 
 type Todo = { id: number; todo: string; userId: string; completed: boolean };
 
@@ -33,12 +33,12 @@ export function Todos({ todos }: { todos: Todo[] }) {
           if (res.error) {
             toast.error(res.error);
           } else if (res.success) {
-            toast.success("Todo toggled!");
+            toast.success('Todo toggled!');
           }
         }
       }
     },
-    [bulkMode, dirty],
+    [bulkMode, dirty]
   );
 
   const markForDeletion = useCallback(
@@ -59,7 +59,7 @@ export function Todos({ todos }: { todos: Todo[] }) {
         setDeleted(newDeleted);
       }
     },
-    [deleted, dirty],
+    [deleted, dirty]
   );
 
   const updateAll = async () => {
@@ -71,7 +71,7 @@ export function Todos({ todos }: { todos: Todo[] }) {
       if (res.error) {
         toast.error(res.error);
       } else if (res.success) {
-        toast.success("Bulk update completed!");
+        toast.success('Bulk update completed!');
       }
     }
   };
@@ -97,12 +97,12 @@ export function Todos({ todos }: { todos: Todo[] }) {
               />
               <label
                 htmlFor={`checkbox-${todo.id}`}
-                className={cn("flex-1 cursor-pointer", {
-                  "text-muted-foreground line-through":
+                className={cn('flex-1 cursor-pointer', {
+                  'text-muted-foreground line-through':
                     dirty.findIndex((t) => t === todo.id) > -1
                       ? !todo.completed
                       : todo.completed,
-                  "text-destructive line-through":
+                  'text-destructive line-through':
                     deleted.findIndex((t) => t === todo.id) > -1,
                 })}
               >

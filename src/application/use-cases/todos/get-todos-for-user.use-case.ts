@@ -1,14 +1,19 @@
-import { getInjection } from '@/di/container';
 import type { Todo } from '@/src/entities/models/todo';
+import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
+import type { ITodosRepository } from '@/src/application/repositories/todos.repository.interface';
 
-export function getTodosForUserUseCase(userId: string): Promise<Todo[]> {
-  const instrumentationService = getInjection('IInstrumentationService');
-  return instrumentationService.startSpan(
-    { name: 'getTodosForUser UseCase', op: 'function' },
-    async () => {
-      const todosRepository = getInjection('ITodosRepository');
+export type IGetTodosForUserUseCase = ReturnType<typeof getTodosForUserUseCase>;
 
-      return await todosRepository.getTodosForUser(userId);
-    }
-  );
-}
+export const getTodosForUserUseCase =
+  (
+    instrumentationService: IInstrumentationService,
+    todosRepository: ITodosRepository
+  ) =>
+  (userId: string): Promise<Todo[]> => {
+    return instrumentationService.startSpan(
+      { name: 'getTodosForUser UseCase', op: 'function' },
+      async () => {
+        return await todosRepository.getTodosForUser(userId);
+      }
+    );
+  };

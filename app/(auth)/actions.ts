@@ -4,9 +4,6 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { Cookie } from '@/src/entities/models/cookie';
-import { signInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
-import { signUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
-import { signOutController } from '@/src/interface-adapters/controllers/auth/sign-out.controller';
 import { SESSION_COOKIE } from '@/config';
 import { InputParseError } from '@/src/entities/errors/common';
 import {
@@ -27,6 +24,7 @@ export async function signUp(formData: FormData) {
 
       let sessionCookie: Cookie;
       try {
+        const signUpController = getInjection('ISignUpController');
         const { cookie } = await signUpController({
           username,
           password,
@@ -38,6 +36,11 @@ export async function signUp(formData: FormData) {
           return {
             error:
               'Invalid data. Make sure the Password and Confirm Password match.',
+          };
+        }
+        if (err instanceof AuthenticationError) {
+          return {
+            error: err.message,
           };
         }
         const crashReporterService = getInjection('ICrashReporterService');
@@ -72,6 +75,7 @@ export async function signIn(formData: FormData) {
 
       let sessionCookie: Cookie;
       try {
+        const signInController = getInjection('ISignInController');
         sessionCookie = await signInController({ username, password });
       } catch (err) {
         if (
@@ -112,6 +116,7 @@ export async function signOut() {
 
       let blankCookie: Cookie;
       try {
+        const signOutController = getInjection('ISignOutController');
         blankCookie = await signOutController(sessionId);
       } catch (err) {
         if (

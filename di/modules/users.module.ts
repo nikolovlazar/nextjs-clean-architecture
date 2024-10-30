@@ -1,17 +1,19 @@
-import { ContainerModule, interfaces } from "inversify";
+import { Container } from '@evyweb/ioctopus';
 
-import { UsersRepository } from "@/src/infrastructure/repositories/users.repository";
-import { IUsersRepository } from "@/src/application/repositories/users.repository.interface";
-import { MockUsersRepository } from "@/src/infrastructure/repositories/users.repository.mock";
+import { MockUsersRepository } from '@/src/infrastructure/repositories/users.repository.mock';
+import { UsersRepository } from '@/src/infrastructure/repositories/users.repository';
 
-import { DI_SYMBOLS } from "../types";
+import { DI_SYMBOLS } from '@/di/types';
 
-const initializeModule = (bind: interfaces.Bind) => {
-  if (process.env.NODE_ENV === "test") {
-    bind<IUsersRepository>(DI_SYMBOLS.IUsersRepository).to(MockUsersRepository);
+export function registerUsersModule(container: Container) {
+  if (process.env.NODE_ENV === 'test') {
+    container.bind(DI_SYMBOLS.IUsersRepository).toClass(MockUsersRepository);
   } else {
-    bind<IUsersRepository>(DI_SYMBOLS.IUsersRepository).to(UsersRepository);
+    container
+      .bind(DI_SYMBOLS.IUsersRepository)
+      .toClass(UsersRepository, [
+        DI_SYMBOLS.IInstrumentationService,
+        DI_SYMBOLS.ICrashReporterService,
+      ]);
   }
-};
-
-export const UsersModule = new ContainerModule(initializeModule);
+}

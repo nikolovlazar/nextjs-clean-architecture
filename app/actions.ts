@@ -4,12 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
 import { SESSION_COOKIE } from '@/config';
-import { getInjection } from '@/di/container';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
 import { InputParseError, NotFoundError } from '@/src/entities/errors/common';
-import { createTodoController } from '@/src/interface-adapters/controllers/todos/create-todo.controller';
-import { toggleTodoController } from '@/src/interface-adapters/controllers/todos/toggle-todo.controller';
-import { bulkUpdateController } from '@/src/interface-adapters/controllers/todos/bulk-update.controller';
+import { getInjection } from '@/di/container';
 
 export async function createTodo(formData: FormData) {
   const instrumentationService = getInjection('IInstrumentationService');
@@ -20,6 +17,7 @@ export async function createTodo(formData: FormData) {
       try {
         const data = Object.fromEntries(formData.entries());
         const sessionId = cookies().get(SESSION_COOKIE)?.value;
+        const createTodoController = getInjection('ICreateTodoController');
         await createTodoController(data, sessionId);
       } catch (err) {
         if (err instanceof InputParseError) {
@@ -50,6 +48,7 @@ export async function toggleTodo(todoId: number) {
     async () => {
       try {
         const sessionId = cookies().get(SESSION_COOKIE)?.value;
+        const toggleTodoController = getInjection('IToggleTodoController');
         await toggleTodoController({ todoId }, sessionId);
       } catch (err) {
         if (err instanceof InputParseError) {
@@ -83,6 +82,7 @@ export async function bulkUpdate(dirty: number[], deleted: number[]) {
     async () => {
       try {
         const sessionId = cookies().get(SESSION_COOKIE)?.value;
+        const bulkUpdateController = getInjection('IBulkUpdateController');
         await bulkUpdateController({ dirty, deleted }, sessionId);
       } catch (err) {
         revalidatePath('/');

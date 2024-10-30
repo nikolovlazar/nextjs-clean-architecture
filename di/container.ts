@@ -1,36 +1,22 @@
-import { Container } from 'inversify';
+import { createContainer } from '@evyweb/ioctopus';
+
+import { DI_RETURN_TYPES, DI_SYMBOLS } from '@/di/types';
 
 import { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
-import { AuthenticationModule } from './modules/authentication.module';
-import { DatabaseModule } from './modules/database.module';
-import { TodosModule } from './modules/todos.module';
-import { UsersModule } from './modules/users.module';
-import { MonitoringModule } from './modules/monitoring.module';
-import { DI_RETURN_TYPES, DI_SYMBOLS } from './types';
 
-const ApplicationContainer = new Container({
-  defaultScope: 'Singleton',
-});
+import { registerMonitoringModule } from '@/di/modules/monitoring.module';
+import { registerAuthenticationModule } from '@/di/modules/authentication.module';
+import { registerTransactionManagerModule } from '@/di/modules/database.module';
+import { registerTodosModule } from '@/di/modules/todos.module';
+import { registerUsersModule } from '@/di/modules/users.module';
 
-export const initializeContainer = () => {
-  ApplicationContainer.load(TodosModule);
-  ApplicationContainer.load(UsersModule);
-  ApplicationContainer.load(AuthenticationModule);
-  ApplicationContainer.load(DatabaseModule);
-  ApplicationContainer.load(MonitoringModule);
-};
+const ApplicationContainer = createContainer();
 
-export const destroyContainer = () => {
-  ApplicationContainer.unload(DatabaseModule);
-  ApplicationContainer.unload(AuthenticationModule);
-  ApplicationContainer.unload(UsersModule);
-  ApplicationContainer.unload(TodosModule);
-  ApplicationContainer.unload(MonitoringModule);
-};
-
-if (process.env.NODE_ENV !== 'test') {
-  initializeContainer();
-}
+registerMonitoringModule(ApplicationContainer);
+registerTransactionManagerModule(ApplicationContainer);
+registerAuthenticationModule(ApplicationContainer);
+registerUsersModule(ApplicationContainer);
+registerTodosModule(ApplicationContainer);
 
 export function getInjection<K extends keyof typeof DI_SYMBOLS>(
   symbol: K
@@ -49,5 +35,3 @@ export function getInjection<K extends keyof typeof DI_SYMBOLS>(
     () => ApplicationContainer.get(DI_SYMBOLS[symbol])
   );
 }
-
-export { ApplicationContainer };

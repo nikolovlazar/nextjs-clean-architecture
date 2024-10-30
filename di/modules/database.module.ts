@@ -1,20 +1,18 @@
-import { ContainerModule, interfaces } from "inversify";
+import { Container } from '@evyweb/ioctopus';
 
-import { ITransactionManagerService } from "@/src/application/services/transaction-manager.service.interface";
-import { TransactionManagerService } from "@/src/infrastructure/services/transaction-manager.service";
-import { MockTransactionManagerService } from "@/src/infrastructure/services/transaction-manager.service.mock";
-import { DI_SYMBOLS } from "../types";
+import { TransactionManagerService } from '@/src/infrastructure/services/transaction-manager.service';
+import { MockTransactionManagerService } from '@/src/infrastructure/services/transaction-manager.service.mock';
 
-const initializeModule = (bind: interfaces.Bind) => {
-  if (process.env.NODE_ENV === "test") {
-    bind<ITransactionManagerService>(DI_SYMBOLS.ITransactionManagerService).to(
-      MockTransactionManagerService,
-    );
+import { DI_SYMBOLS } from '@/di/types';
+
+export function registerTransactionManagerModule(container: Container) {
+  if (process.env.NODE_ENV === 'test') {
+    container
+      .bind(DI_SYMBOLS.ITransactionManagerService)
+      .toClass(MockTransactionManagerService);
   } else {
-    bind<ITransactionManagerService>(DI_SYMBOLS.ITransactionManagerService).to(
-      TransactionManagerService,
-    );
+    container
+      .bind(DI_SYMBOLS.ITransactionManagerService)
+      .toClass(TransactionManagerService);
   }
-};
-
-export const DatabaseModule = new ContainerModule(initializeModule);
+}
