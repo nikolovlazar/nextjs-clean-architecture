@@ -18,8 +18,8 @@ registerAuthenticationModule(ApplicationContainer);
 registerUsersModule(ApplicationContainer);
 registerTodosModule(ApplicationContainer);
 
-export function getInjection<T extends keyof DI_RETURN_TYPES>(
-  key: T
+export function getInjection<T extends keyof typeof DI_SYMBOLS>(
+  symbol: T
 ): DI_RETURN_TYPES[T] {
   const instrumentationService =
     ApplicationContainer.get<IInstrumentationService>(
@@ -30,8 +30,8 @@ export function getInjection<T extends keyof DI_RETURN_TYPES>(
     {
       name: '(di) getInjection',
       op: 'function',
-      attributes: { symbol: key.toString() },
+      attributes: { symbol: symbol.toString() },
     },
-    () => ApplicationContainer.get<DI_RETURN_TYPES[T]>(DI_SYMBOLS[key])
+    () => ApplicationContainer.get(DI_SYMBOLS[symbol])
   );
 }
