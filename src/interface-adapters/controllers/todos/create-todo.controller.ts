@@ -30,17 +30,12 @@ const inputSchema = z.object({ todo: z.string().min(1) });
 export type ICreateTodoController = ReturnType<typeof createTodoController>;
 
 export const createTodoController =
-  ({
-    instrumentationService,
-    authenticationService,
-    createTodoUseCase,
-    transactionManagerService,
-  }: {
-    instrumentationService: IInstrumentationService;
-    authenticationService: IAuthenticationService;
-    createTodoUseCase: ICreateTodoUseCase;
-    transactionManagerService: ITransactionManagerService;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    authenticationService: IAuthenticationService,
+    createTodoUseCase: ICreateTodoUseCase,
+    transactionManagerService: ITransactionManagerService
+  ) =>
   async (
     input: Partial<z.infer<typeof inputSchema>>,
     sessionId: string | undefined

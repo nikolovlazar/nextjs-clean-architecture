@@ -6,13 +6,10 @@ import type { ITodosRepository } from '@/src/application/repositories/todos.repo
 export type ICreateTodoUseCase = ReturnType<typeof createTodoUseCase>;
 
 export const createTodoUseCase =
-  ({
-    instrumentationService,
-    todosRepository,
-  }: {
-    instrumentationService: IInstrumentationService;
-    todosRepository: ITodosRepository;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    todosRepository: ITodosRepository
+  ) =>
   (
     input: {
       todo: string;

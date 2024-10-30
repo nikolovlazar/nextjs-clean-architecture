@@ -25,23 +25,23 @@ export function registerAuthenticationModule(container: Container) {
 
   container
     .bind(DI_SYMBOLS.ISignInController)
-    .toHigherOrderFunction(signInController, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      signInUseCase: DI_SYMBOLS.ISignInUseCase,
-    });
+    .toHigherOrderFunction(signInController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ISignInUseCase,
+    ]);
 
   container
     .bind(DI_SYMBOLS.ISignOutController)
-    .toHigherOrderFunction(signOutController, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      authenticationService: DI_SYMBOLS.IAuthenticationService,
-      signOutUseCase: DI_SYMBOLS.ISignOutUseCase,
-    });
+    .toHigherOrderFunction(signOutController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IAuthenticationService,
+      DI_SYMBOLS.ISignOutUseCase,
+    ]);
 
   container
     .bind(DI_SYMBOLS.ISignUpController)
-    .toHigherOrderFunction(signUpController, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      signUpUseCase: DI_SYMBOLS.ISignUpUseCase,
-    });
+    .toHigherOrderFunction(signUpController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ISignUpUseCase,
+    ]);
 }

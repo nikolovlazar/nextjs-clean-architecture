@@ -29,64 +29,64 @@ export function registerTodosModule(container: Container) {
 
   container
     .bind(DI_SYMBOLS.ICreateTodoUseCase)
-    .toHigherOrderFunction(createTodoUseCase, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      todosRepository: DI_SYMBOLS.ITodosRepository,
-    });
+    .toHigherOrderFunction(createTodoUseCase, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ITodosRepository,
+    ]);
 
   container
     .bind(DI_SYMBOLS.IDeleteTodoUseCase)
-    .toHigherOrderFunction(deleteTodoUseCase, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      todosRepository: DI_SYMBOLS.ITodosRepository,
-    });
+    .toHigherOrderFunction(deleteTodoUseCase, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ITodosRepository,
+    ]);
 
   container
     .bind(DI_SYMBOLS.IGetTodosForUserUseCase)
-    .toHigherOrderFunction(getTodosForUserUseCase, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      todosRepository: DI_SYMBOLS.ITodosRepository,
-    });
+    .toHigherOrderFunction(getTodosForUserUseCase, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ITodosRepository,
+    ]);
 
   container
     .bind(DI_SYMBOLS.IToggleTodoUseCase)
-    .toHigherOrderFunction(toggleTodoUseCase, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      todosRepository: DI_SYMBOLS.ITodosRepository,
-    });
+    .toHigherOrderFunction(toggleTodoUseCase, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.ITodosRepository,
+    ]);
 
   container
     .bind(DI_SYMBOLS.IBulkUpdateController)
-    .toHigherOrderFunction(bulkUpdateController, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      authenticationService: DI_SYMBOLS.IAuthenticationService,
-      transactionManagerService: DI_SYMBOLS.ITransactionManagerService,
-      toggleTodoUseCase: DI_SYMBOLS.IToggleTodoUseCase,
-      deleteTodoUseCase: DI_SYMBOLS.IDeleteTodoUseCase,
-    });
+    .toHigherOrderFunction(bulkUpdateController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IAuthenticationService,
+      DI_SYMBOLS.ITransactionManagerService,
+      DI_SYMBOLS.IToggleTodoUseCase,
+      DI_SYMBOLS.IDeleteTodoUseCase,
+    ]);
 
   container
     .bind(DI_SYMBOLS.ICreateTodoController)
-    .toHigherOrderFunction(createTodoController, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      authenticationService: DI_SYMBOLS.IAuthenticationService,
-      transactionManagerService: DI_SYMBOLS.ITransactionManagerService,
-      createTodoUseCase: DI_SYMBOLS.ICreateTodoUseCase,
-    });
+    .toHigherOrderFunction(createTodoController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IAuthenticationService,
+      DI_SYMBOLS.ITransactionManagerService,
+      DI_SYMBOLS.ICreateTodoUseCase,
+    ]);
 
   container
     .bind(DI_SYMBOLS.IGetTodosForUserController)
-    .toHigherOrderFunction(getTodosForUserController, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      getTodosForUserUseCase: DI_SYMBOLS.IGetTodosForUserUseCase,
-      authenticationService: DI_SYMBOLS.IAuthenticationService,
-    });
+    .toHigherOrderFunction(getTodosForUserController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IGetTodosForUserUseCase,
+      DI_SYMBOLS.IAuthenticationService,
+    ]);
 
   container
     .bind(DI_SYMBOLS.IToggleTodoController)
-    .toHigherOrderFunction(toggleTodoController, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      toggleTodoUseCase: DI_SYMBOLS.IToggleTodoUseCase,
-      authenticationService: DI_SYMBOLS.IAuthenticationService,
-    });
+    .toHigherOrderFunction(toggleTodoController, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IToggleTodoUseCase,
+      DI_SYMBOLS.IAuthenticationService,
+    ]);
 }

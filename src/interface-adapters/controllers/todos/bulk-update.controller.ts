@@ -16,19 +16,13 @@ const inputSchema = z.object({
 export type IBulkUpdateController = ReturnType<typeof bulkUpdateController>;
 
 export const bulkUpdateController =
-  ({
-    instrumentationService,
-    authenticationService,
-    transactionManagerService,
-    toggleTodoUseCase,
-    deleteTodoUseCase,
-  }: {
-    instrumentationService: IInstrumentationService;
-    authenticationService: IAuthenticationService;
-    transactionManagerService: ITransactionManagerService;
-    toggleTodoUseCase: IToggleTodoUseCase;
-    deleteTodoUseCase: IDeleteTodoUseCase;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    authenticationService: IAuthenticationService,
+    transactionManagerService: ITransactionManagerService,
+    toggleTodoUseCase: IToggleTodoUseCase,
+    deleteTodoUseCase: IDeleteTodoUseCase
+  ) =>
   async (
     input: z.infer<typeof inputSchema>,
     sessionId: string | undefined

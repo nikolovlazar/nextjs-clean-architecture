@@ -8,13 +8,10 @@ import type { ITodosRepository } from '@/src/application/repositories/todos.repo
 export type IToggleTodoUseCase = ReturnType<typeof toggleTodoUseCase>;
 
 export const toggleTodoUseCase =
-  ({
-    instrumentationService,
-    todosRepository,
-  }: {
-    instrumentationService: IInstrumentationService;
-    todosRepository: ITodosRepository;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    todosRepository: ITodosRepository
+  ) =>
   (
     input: {
       todoId: number;

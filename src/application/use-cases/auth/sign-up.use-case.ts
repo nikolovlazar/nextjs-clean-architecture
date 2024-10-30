@@ -12,15 +12,11 @@ import { PASSWORD_SALT_ROUNDS } from '@/config';
 export type ISignUpUseCase = ReturnType<typeof signUpUseCase>;
 
 export const signUpUseCase =
-  ({
-    instrumentationService,
-    authenticationService,
-    usersRepository,
-  }: {
-    instrumentationService: IInstrumentationService;
-    authenticationService: IAuthenticationService;
-    usersRepository: IUsersRepository;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    authenticationService: IAuthenticationService,
+    usersRepository: IUsersRepository
+  ) =>
   (input: {
     username: string;
     password: string;

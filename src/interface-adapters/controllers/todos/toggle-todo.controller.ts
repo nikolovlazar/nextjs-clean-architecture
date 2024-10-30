@@ -27,15 +27,11 @@ const inputSchema = z.object({ todoId: z.number() });
 export type IToggleTodoController = ReturnType<typeof toggleTodoController>;
 
 export const toggleTodoController =
-  ({
-    instrumentationService,
-    toggleTodoUseCase,
-    authenticationService,
-  }: {
-    instrumentationService: IInstrumentationService;
-    toggleTodoUseCase: IToggleTodoUseCase;
-    authenticationService: IAuthenticationService;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    toggleTodoUseCase: IToggleTodoUseCase,
+    authenticationService: IAuthenticationService
+  ) =>
   async (
     input: Partial<z.infer<typeof inputSchema>>,
     sessionId: string | undefined

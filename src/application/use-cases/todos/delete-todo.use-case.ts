@@ -8,13 +8,10 @@ import type { ITodosRepository } from '@/src/application/repositories/todos.repo
 export type IDeleteTodoUseCase = ReturnType<typeof deleteTodoUseCase>;
 
 export const deleteTodoUseCase =
-  ({
-    instrumentationService,
-    todosRepository,
-  }: {
-    instrumentationService: IInstrumentationService;
-    todosRepository: ITodosRepository;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    todosRepository: ITodosRepository
+  ) =>
   (
     input: {
       todoId: number;

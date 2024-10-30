@@ -13,13 +13,10 @@ const inputSchema = z.object({
 export type ISignInController = ReturnType<typeof signInController>;
 
 export const signInController =
-  ({
-    instrumentationService,
-    signInUseCase,
-  }: {
-    instrumentationService: IInstrumentationService;
-    signInUseCase: ISignInUseCase;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    signInUseCase: ISignInUseCase
+  ) =>
   async (input: Partial<z.infer<typeof inputSchema>>): Promise<Cookie> => {
     return await instrumentationService.startSpan(
       { name: 'signIn Controller' },

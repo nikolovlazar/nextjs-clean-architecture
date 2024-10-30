@@ -10,15 +10,11 @@ import type { IAuthenticationService } from '@/src/application/services/authenti
 export type ISignInUseCase = ReturnType<typeof signInUseCase>;
 
 export const signInUseCase =
-  ({
-    instrumentationService,
-    usersRepository,
-    authenticationService,
-  }: {
-    instrumentationService: IInstrumentationService;
-    usersRepository: IUsersRepository;
-    authenticationService: IAuthenticationService;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    usersRepository: IUsersRepository,
+    authenticationService: IAuthenticationService
+  ) =>
   (input: {
     username: string;
     password: string;

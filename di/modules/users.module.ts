@@ -23,24 +23,24 @@ export function registerUsersModule(container: Container) {
 
   container
     .bind(DI_SYMBOLS.ISignInUseCase)
-    .toHigherOrderFunction(signInUseCase, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      authenticationService: DI_SYMBOLS.IAuthenticationService,
-      usersRepository: DI_SYMBOLS.IUsersRepository,
-    });
+    .toHigherOrderFunction(signInUseCase, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IUsersRepository,
+      DI_SYMBOLS.IAuthenticationService,
+    ]);
 
   container
     .bind(DI_SYMBOLS.ISignOutUseCase)
-    .toHigherOrderFunction(signOutUseCase, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      authenticationService: DI_SYMBOLS.IAuthenticationService,
-    });
+    .toHigherOrderFunction(signOutUseCase, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IAuthenticationService,
+    ]);
 
   container
     .bind(DI_SYMBOLS.ISignUpUseCase)
-    .toHigherOrderFunction(signUpUseCase, {
-      instrumentationService: DI_SYMBOLS.IInstrumentationService,
-      authenticationService: DI_SYMBOLS.IAuthenticationService,
-      usersRepository: DI_SYMBOLS.IUsersRepository,
-    });
+    .toHigherOrderFunction(signUpUseCase, [
+      DI_SYMBOLS.IInstrumentationService,
+      DI_SYMBOLS.IAuthenticationService,
+      DI_SYMBOLS.IUsersRepository,
+    ]);
 }

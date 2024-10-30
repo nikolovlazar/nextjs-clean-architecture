@@ -7,15 +7,11 @@ import { IAuthenticationService } from '@/src/application/services/authenticatio
 export type ISignOutController = ReturnType<typeof signOutController>;
 
 export const signOutController =
-  ({
-    instrumentationService,
-    authenticationService,
-    signOutUseCase,
-  }: {
-    instrumentationService: IInstrumentationService;
-    authenticationService: IAuthenticationService;
-    signOutUseCase: ISignOutUseCase;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    authenticationService: IAuthenticationService,
+    signOutUseCase: ISignOutUseCase
+  ) =>
   async (sessionId: string | undefined): Promise<Cookie> => {
     return await instrumentationService.startSpan(
       { name: 'signOut Controller' },

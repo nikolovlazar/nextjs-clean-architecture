@@ -5,13 +5,10 @@ import type { ITodosRepository } from '@/src/application/repositories/todos.repo
 export type IGetTodosForUserUseCase = ReturnType<typeof getTodosForUserUseCase>;
 
 export const getTodosForUserUseCase =
-  ({
-    instrumentationService,
-    todosRepository,
-  }: {
-    instrumentationService: IInstrumentationService;
-    todosRepository: ITodosRepository;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    todosRepository: ITodosRepository
+  ) =>
   (userId: string): Promise<Todo[]> => {
     return instrumentationService.startSpan(
       { name: 'getTodosForUser UseCase', op: 'function' },

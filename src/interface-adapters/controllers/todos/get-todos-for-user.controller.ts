@@ -25,15 +25,11 @@ export type IGetTodosForUserController = ReturnType<
 >;
 
 export const getTodosForUserController =
-  ({
-    instrumentationService,
-    getTodosForUserUseCase,
-    authenticationService,
-  }: {
-    instrumentationService: IInstrumentationService;
-    getTodosForUserUseCase: IGetTodosForUserUseCase;
-    authenticationService: IAuthenticationService;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    getTodosForUserUseCase: IGetTodosForUserUseCase,
+    authenticationService: IAuthenticationService
+  ) =>
   async (
     sessionId: string | undefined
   ): Promise<ReturnType<typeof presenter>> => {

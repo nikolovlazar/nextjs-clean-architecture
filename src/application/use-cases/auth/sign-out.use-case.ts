@@ -5,13 +5,10 @@ import type { IAuthenticationService } from '@/src/application/services/authenti
 export type ISignOutUseCase = ReturnType<typeof signOutUseCase>;
 
 export const signOutUseCase =
-  ({
-    instrumentationService,
-    authenticationService,
-  }: {
-    instrumentationService: IInstrumentationService;
-    authenticationService: IAuthenticationService;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    authenticationService: IAuthenticationService
+  ) =>
   (sessionId: string): Promise<{ blankCookie: Cookie }> => {
     return instrumentationService.startSpan(
       { name: 'signOut Use Case', op: 'function' },

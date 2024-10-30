@@ -28,13 +28,10 @@ const inputSchema = z
 export type ISignUpController = ReturnType<typeof signUpController>;
 
 export const signUpController =
-  ({
-    instrumentationService,
-    signUpUseCase,
-  }: {
-    instrumentationService: IInstrumentationService;
-    signUpUseCase: ISignUpUseCase;
-  }) =>
+  (
+    instrumentationService: IInstrumentationService,
+    signUpUseCase: ISignUpUseCase
+  ) =>
   async (
     input: Partial<z.infer<typeof inputSchema>>
   ): Promise<ReturnType<typeof signUpUseCase>> => {
