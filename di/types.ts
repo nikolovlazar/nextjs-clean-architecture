@@ -52,7 +52,7 @@ export const DI_SYMBOLS = {
   IToggleTodoController: Symbol.for('IToggleTodoController'),
 };
 
-export type DI_RETURN_TYPES = {
+export interface DI_RETURN_TYPES {
   // Services
   IAuthenticationService: IAuthenticationService;
   ITransactionManagerService: ITransactionManagerService;
@@ -80,4 +80,4 @@ export type DI_RETURN_TYPES = {
   ICreateTodoController: ICreateTodoController;
   IGetTodosForUserController: IGetTodosForUserController;
   IToggleTodoController: IToggleTodoController;
-};
+}
