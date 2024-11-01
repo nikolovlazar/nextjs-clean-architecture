@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { Loader } from 'lucide-react';
 
 import { Button } from '../../_components/ui/button';
 import {
@@ -15,7 +16,6 @@ import { Input } from '../../_components/ui/input';
 import { Label } from '../../_components/ui/label';
 import { Separator } from '../../_components/ui/separator';
 import { signUp } from '../actions';
-import { Loader } from 'lucide-react';
 
 export default function SignUp() {
   const [error, setError] = useState<string>();
