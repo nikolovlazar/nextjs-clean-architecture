@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Trash } from 'lucide-react';
+import { Loader, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Checkbox } from './_components/ui/checkbox';
@@ -15,6 +15,7 @@ export function Todos({ todos }: { todos: Todo[] }) {
   const [bulkMode, setBulkMode] = useState(false);
   const [dirty, setDirty] = useState<number[]>([]);
   const [deleted, setDeleted] = useState<number[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleToggle = useCallback(
     async (id: number) => {
@@ -63,7 +64,9 @@ export function Todos({ todos }: { todos: Todo[] }) {
   );
 
   const updateAll = async () => {
+    setLoading(true);
     const res = await bulkUpdate(dirty, deleted);
+    setLoading(false);
     setBulkMode(false);
     setDirty([]);
     setDeleted([]);
@@ -126,7 +129,9 @@ export function Todos({ todos }: { todos: Todo[] }) {
       </ul>
       {bulkMode ? (
         <div className="w-full grid grid-cols-2 gap-2">
-          <Button onClick={updateAll}>Update all</Button>
+          <Button disabled={loading} onClick={updateAll}>
+            {loading ? <Loader className="animate-spin" /> : 'Update all'}
+          </Button>
           <Button variant="secondary" onClick={() => setBulkMode(false)}>
             Cancel
           </Button>

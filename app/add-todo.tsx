@@ -1,7 +1,7 @@
 'use client';
 
-import { Plus } from 'lucide-react';
-import { useRef } from 'react';
+import { Loader, Plus } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from './_components/ui/button';
@@ -10,11 +10,15 @@ import { createTodo } from './actions';
 
 export function CreateTodo() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (loading) return;
 
     const formData = new FormData(event.currentTarget);
+
+    setLoading(true);
     const res = await createTodo(formData);
 
     if (res) {
@@ -28,6 +32,7 @@ export function CreateTodo() {
         }
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -38,8 +43,8 @@ export function CreateTodo() {
         className="flex-1"
         placeholder="Take out trash"
       />
-      <Button size="icon" type="submit">
-        <Plus />
+      <Button size="icon" disabled={loading} type="submit">
+        {loading ? <Loader className="animate-spin" /> : <Plus />}
       </Button>
     </form>
   );

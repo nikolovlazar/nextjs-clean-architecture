@@ -15,12 +15,15 @@ import { Input } from '../../_components/ui/input';
 import { Label } from '../../_components/ui/label';
 import { Separator } from '../../_components/ui/separator';
 import { signUp } from '../actions';
+import { Loader } from 'lucide-react';
 
 export default function SignUp() {
   const [error, setError] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (loading) return;
 
     const formData = new FormData(event.currentTarget);
 
@@ -32,10 +35,12 @@ export default function SignUp() {
       return;
     }
 
+    setLoading(true);
     const res = await signUp(formData);
     if (res && res.error) {
       setError(res.error);
     }
+    setLoading(false);
   };
 
   return (
@@ -74,8 +79,12 @@ export default function SignUp() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full">
-              Create an account
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? (
+                <Loader className="animate-spin" />
+              ) : (
+                'Create an account'
+              )}
             </Button>
           </div>
           <div className="mt-4 text-center text-sm">

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Loader } from 'lucide-react';
 
 import Link from 'next/link';
 import { Button } from '../../_components/ui/button';
@@ -18,16 +19,20 @@ import { signIn } from '../actions';
 
 export default function SignIn() {
   const [error, setError] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (loading) return;
 
     const formData = new FormData(event.currentTarget);
 
+    setLoading(true);
     const res = await signIn(formData);
     if (res && res.error) {
       setError(res.error);
     }
+    setLoading(false);
   };
 
   return (
@@ -57,8 +62,8 @@ export default function SignIn() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" name="password" required />
             </div>
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? <Loader className="animate-spin" /> : 'Login'}
             </Button>
           </div>
           <div className="mt-4 text-center text-sm">
