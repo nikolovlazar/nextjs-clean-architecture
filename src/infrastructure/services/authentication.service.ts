@@ -15,7 +15,7 @@ export class AuthenticationService implements IAuthenticationService {
 
   constructor(
     private readonly _usersRepository: IUsersRepository,
-    private readonly instrumentationService: IInstrumentationService
+    private readonly _instrumentationService: IInstrumentationService
   ) {
     this._lucia = new Lucia(luciaAdapter, {
       sessionCookie: {
@@ -36,10 +36,10 @@ export class AuthenticationService implements IAuthenticationService {
   async validateSession(
     sessionId: string
   ): Promise<{ user: User; session: Session }> {
-    return await this.instrumentationService.startSpan(
+    return await this._instrumentationService.startSpan(
       { name: 'AuthenticationService > validateSession' },
       async () => {
-        const result = await this.instrumentationService.startSpan(
+        const result = await this._instrumentationService.startSpan(
           { name: 'lucia.validateSession', op: 'function' },
           () => this._lucia.validateSession(sessionId)
         );
@@ -62,16 +62,16 @@ export class AuthenticationService implements IAuthenticationService {
   async createSession(
     user: User
   ): Promise<{ session: Session; cookie: Cookie }> {
-    return await this.instrumentationService.startSpan(
+    return await this._instrumentationService.startSpan(
       { name: 'AuthenticationService > createSession' },
       async () => {
-        const luciaSession = await this.instrumentationService.startSpan(
+        const luciaSession = await this._instrumentationService.startSpan(
           { name: 'lucia.createSession', op: 'function' },
           () => this._lucia.createSession(user.id, {})
         );
 
         const session = sessionSchema.parse(luciaSession);
-        const cookie = await this.instrumentationService.startSpan(
+        const cookie = await this._instrumentationService.startSpan(
           { name: 'lucia.createSessionCookie', op: 'function' },
           () => this._lucia.createSessionCookie(session.id)
         );
@@ -82,12 +82,12 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   async invalidateSession(sessionId: string): Promise<{ blankCookie: Cookie }> {
-    await this.instrumentationService.startSpan(
+    await this._instrumentationService.startSpan(
       { name: 'lucia.invalidateSession', op: 'function' },
       () => this._lucia.invalidateSession(sessionId)
     );
 
-    const blankCookie = await this.instrumentationService.startSpan(
+    const blankCookie = await this._instrumentationService.startSpan(
       { name: 'lucia.createBlankSessionCookie', op: 'function' },
       () => this._lucia.createBlankSessionCookie()
     );
@@ -96,7 +96,7 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   generateUserId(): string {
-    return this.instrumentationService.startSpan(
+    return this._instrumentationService.startSpan(
       { name: 'AuthenticationService > generateUserId', op: 'function' },
       () => generateIdFromEntropySize(10)
     );
