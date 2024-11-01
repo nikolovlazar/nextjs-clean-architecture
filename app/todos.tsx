@@ -86,7 +86,7 @@ export function Todos({ todos }: { todos: Todo[] }) {
           todos.map((todo) => (
             <li
               key={todo.id}
-              className="flex items-center gap-2 w-full hover:bg-muted/50 active:bg-muted rounded-sm p-1"
+              className="h-10 flex items-center gap-2 w-full hover:bg-muted/50 active:bg-muted rounded-sm p-1"
             >
               <Checkbox
                 checked={
@@ -96,7 +96,9 @@ export function Todos({ todos }: { todos: Todo[] }) {
                 }
                 onCheckedChange={() => handleToggle(todo.id)}
                 id={`checkbox-${todo.id}`}
-                disabled={deleted.findIndex((t) => t === todo.id) > -1}
+                disabled={
+                  deleted.findIndex((t) => t === todo.id) > -1 || loading
+                }
               />
               <label
                 htmlFor={`checkbox-${todo.id}`}
@@ -116,6 +118,7 @@ export function Todos({ todos }: { todos: Todo[] }) {
                   size="sm"
                   variant="destructive"
                   className="p-3"
+                  disabled={loading}
                   onClick={() => markForDeletion(todo.id)}
                 >
                   <Trash size={16} />
