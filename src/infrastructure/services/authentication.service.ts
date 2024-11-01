@@ -14,7 +14,7 @@ export class AuthenticationService implements IAuthenticationService {
   private _lucia: Lucia;
 
   constructor(
-    private _usersRepository: IUsersRepository,
+    private readonly _usersRepository: IUsersRepository,
     private readonly instrumentationService: IInstrumentationService
   ) {
     this._lucia = new Lucia(luciaAdapter, {
