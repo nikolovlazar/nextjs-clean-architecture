@@ -1,3 +1,5 @@
+import { compare } from 'bcrypt-ts';
+
 import { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
 import { UnauthenticatedError } from '@/src/entities/errors/auth';
 import { User } from '@/src/entities/models/user';
@@ -13,11 +15,11 @@ export class MockAuthenticationService implements IAuthenticationService {
     this._sessions = {};
   }
 
-  async validatePasswords(
+  validatePasswords(
     inputPassword: string,
     usersHashedPassword: string
   ): Promise<boolean> {
-    return inputPassword === usersHashedPassword;
+    return compare(inputPassword, usersHashedPassword);
   }
 
   async validateSession(

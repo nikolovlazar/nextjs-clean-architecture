@@ -98,7 +98,7 @@ export class AuthenticationService implements IAuthenticationService {
       () => this._lucia.invalidateSession(sessionId)
     );
 
-    const blankCookie = await this._instrumentationService.startSpan(
+    const blankCookie = this._instrumentationService.startSpan(
       { name: 'lucia.createBlankSessionCookie', op: 'function' },
       () => this._lucia.createBlankSessionCookie()
     );
