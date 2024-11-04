@@ -12,8 +12,8 @@ You can run the project just by running `npm install` and `npm run dev`.
 
 ![Clean Architecture Diagram](./assets/clean-architecture-diagram.jpg)
 
-> [!NOTE] 👆 I drew this simplified version of the
-> [original Clean Architecture diagram](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html).
+> [!NOTE]
+> 👆 I drew this simplified version of the [original Clean Architecture diagram](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html).
 > I simplified it in a way that makes more sense to me, and it's easier to
 > comprehend. I hope it helps you too.
 
