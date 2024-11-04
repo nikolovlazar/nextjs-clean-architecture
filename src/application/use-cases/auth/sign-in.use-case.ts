@@ -1,5 +1,3 @@
-import { compare } from 'bcrypt-ts';
-
 import { AuthenticationError } from '@/src/entities/errors/auth';
 import { Cookie } from '@/src/entities/models/cookie';
 import { Session } from '@/src/entities/models/session';
@@ -30,9 +28,9 @@ export const signInUseCase =
           throw new AuthenticationError('User does not exist');
         }
 
-        const validPassword = await instrumentationService.startSpan(
-          { name: 'verify password hash', op: 'function' },
-          () => compare(input.password, existingUser.password_hash)
+        const validPassword = await authenticationService.validatePasswords(
+          input.password,
+          existingUser.password_hash
         );
 
         if (!validPassword) {

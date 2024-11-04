@@ -1,4 +1,5 @@
 import { generateIdFromEntropySize, Lucia } from 'lucia';
+import { compare } from 'bcrypt-ts';
 
 import { SESSION_COOKIE } from '@/config';
 import { luciaAdapter } from '@/drizzle';
@@ -31,6 +32,16 @@ export class AuthenticationService implements IAuthenticationService {
         };
       },
     });
+  }
+
+  validatePasswords(
+    inputPassword: string,
+    usersHashedPassword: string
+  ): Promise<boolean> {
+    return this._instrumentationService.startSpan(
+      { name: 'verify password hash', op: 'function' },
+      () => compare(inputPassword, usersHashedPassword)
+    );
   }
 
   async validateSession(

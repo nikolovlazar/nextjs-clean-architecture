@@ -13,6 +13,13 @@ export class MockAuthenticationService implements IAuthenticationService {
     this._sessions = {};
   }
 
+  async validatePasswords(
+    inputPassword: string,
+    usersHashedPassword: string
+  ): Promise<boolean> {
+    return inputPassword === usersHashedPassword;
+  }
+
   async validateSession(
     sessionId: string
   ): Promise<{ user: User; session: Session }> {

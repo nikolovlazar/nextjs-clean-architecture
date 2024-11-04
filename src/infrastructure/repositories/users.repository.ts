@@ -1,12 +1,14 @@
 import { eq } from 'drizzle-orm';
+import { hash } from 'bcrypt-ts';
 
 import { db } from '@/drizzle';
 import { users } from '@/drizzle/schema';
 import { IUsersRepository } from '@/src/application/repositories/users.repository.interface';
 import { DatabaseOperationError } from '@/src/entities/errors/common';
-import { User } from '@/src/entities/models/user';
+import type { CreateUser, User } from '@/src/entities/models/user';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 import type { ICrashReporterService } from '@/src/application/services/crash-reporter.service.interface';
+import { PASSWORD_SALT_ROUNDS } from '@/config';
 
 export class UsersRepository implements IUsersRepository {
   constructor(
@@ -65,12 +67,22 @@ export class UsersRepository implements IUsersRepository {
       }
     );
   }
-  async createUser(input: User): Promise<User> {
+  async createUser(input: CreateUser): Promise<User> {
     return await this.instrumentationService.startSpan(
       { name: 'UsersRepository > createUser' },
       async () => {
         try {
-          const query = db.insert(users).values(input).returning();
+          const password_hash = await this.instrumentationService.startSpan(
+            { name: 'hash password', op: 'function' },
+            () => hash(input.password, PASSWORD_SALT_ROUNDS)
+          );
+
+          const newUser: User = {
+            id: input.id,
+            username: input.username,
+            password_hash,
+          };
+          const query = db.insert(users).values(newUser).returning();
 
           const [created] = await this.instrumentationService.startSpan(
             {

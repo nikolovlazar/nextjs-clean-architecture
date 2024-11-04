@@ -1,5 +1,3 @@
-import { hash } from 'bcrypt-ts';
-
 import { AuthenticationError } from '@/src/entities/errors/auth';
 import { Cookie } from '@/src/entities/models/cookie';
 import { Session } from '@/src/entities/models/session';
@@ -7,7 +5,6 @@ import { User } from '@/src/entities/models/user';
 import type { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 import type { IAuthenticationService } from '@/src/application/services/authentication.service.interface';
 import type { IUsersRepository } from '@/src/application/repositories/users.repository.interface';
-import { PASSWORD_SALT_ROUNDS } from '@/config';
 
 export type ISignUpUseCase = ReturnType<typeof signUpUseCase>;
 
@@ -35,17 +32,12 @@ export const signUpUseCase =
           throw new AuthenticationError('Username taken');
         }
 
-        const passwordHash = await instrumentationService.startSpan(
-          { name: 'hash password', op: 'function' },
-          () => hash(input.password, PASSWORD_SALT_ROUNDS)
-        );
-
         const userId = authenticationService.generateUserId();
 
         const newUser = await usersRepository.createUser({
           id: userId,
           username: input.username,
-          password_hash: passwordHash,
+          password: input.password,
         });
 
         const { cookie, session } =

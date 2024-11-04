@@ -1,7 +1,7 @@
 import { hashSync } from 'bcrypt-ts';
 
 import { IUsersRepository } from '@/src/application/repositories/users.repository.interface';
-import { User } from '@/src/entities/models/user';
+import type { CreateUser, User } from '@/src/entities/models/user';
 import { PASSWORD_SALT_ROUNDS } from '@/config';
 
 export class MockUsersRepository implements IUsersRepository {
@@ -35,8 +35,13 @@ export class MockUsersRepository implements IUsersRepository {
     const user = this._users.find((u) => u.username === username);
     return user;
   }
-  async createUser(input: User): Promise<User> {
-    this._users.push(input);
-    return input;
+  async createUser(input: CreateUser): Promise<User> {
+    const newUser: User = {
+      id: this._users.length.toString(),
+      username: input.username,
+      password_hash: input.password,
+    };
+    this._users.push(newUser);
+    return newUser;
   }
 }
