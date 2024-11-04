@@ -172,8 +172,8 @@ layers depend only on layers **below them**, but not above.
 
 ## FAQ
 
-> [!TIP] If you have a question not covered by the FAQ, feel free to either
-> [open an Issue](https://github.com/nikolovlazar/nextjs-clean-architecture/issues/new)
+> [!TIP]
+> If you have a question not covered by the FAQ, feel free to either [open an Issue](https://github.com/nikolovlazar/nextjs-clean-architecture/issues/new)
 > in this repo, or join [my Discord server](https://creatures.sh) and start a
 > conversation there.
 
