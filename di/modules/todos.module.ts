@@ -1,4 +1,4 @@
-import { Container } from '@evyweb/ioctopus';
+import { createModule } from '@evyweb/ioctopus';
 
 import { MockTodosRepository } from '@/src/infrastructure/repositories/todos.repository.mock';
 import { TodosRepository } from '@/src/infrastructure/repositories/todos.repository';
@@ -15,11 +15,13 @@ import { toggleTodoController } from '@/src/interface-adapters/controllers/todos
 
 import { DI_SYMBOLS } from '@/di/types';
 
-export function registerTodosModule(container: Container) {
+export function createTodosModule() {
+  const todosModule = createModule();
+
   if (process.env.NODE_ENV === 'test') {
-    container.bind(DI_SYMBOLS.ITodosRepository).toClass(MockTodosRepository);
+    todosModule.bind(DI_SYMBOLS.ITodosRepository).toClass(MockTodosRepository);
   } else {
-    container
+    todosModule
       .bind(DI_SYMBOLS.ITodosRepository)
       .toClass(TodosRepository, [
         DI_SYMBOLS.IInstrumentationService,
@@ -27,35 +29,35 @@ export function registerTodosModule(container: Container) {
       ]);
   }
 
-  container
+  todosModule
     .bind(DI_SYMBOLS.ICreateTodoUseCase)
     .toHigherOrderFunction(createTodoUseCase, [
       DI_SYMBOLS.IInstrumentationService,
       DI_SYMBOLS.ITodosRepository,
     ]);
 
-  container
+  todosModule
     .bind(DI_SYMBOLS.IDeleteTodoUseCase)
     .toHigherOrderFunction(deleteTodoUseCase, [
       DI_SYMBOLS.IInstrumentationService,
       DI_SYMBOLS.ITodosRepository,
     ]);
 
-  container
+  todosModule
     .bind(DI_SYMBOLS.IGetTodosForUserUseCase)
     .toHigherOrderFunction(getTodosForUserUseCase, [
       DI_SYMBOLS.IInstrumentationService,
       DI_SYMBOLS.ITodosRepository,
     ]);
 
-  container
+  todosModule
     .bind(DI_SYMBOLS.IToggleTodoUseCase)
     .toHigherOrderFunction(toggleTodoUseCase, [
       DI_SYMBOLS.IInstrumentationService,
       DI_SYMBOLS.ITodosRepository,
     ]);
 
-  container
+  todosModule
     .bind(DI_SYMBOLS.IBulkUpdateController)
     .toHigherOrderFunction(bulkUpdateController, [
       DI_SYMBOLS.IInstrumentationService,
@@ -65,7 +67,7 @@ export function registerTodosModule(container: Container) {
       DI_SYMBOLS.IDeleteTodoUseCase,
     ]);
 
-  container
+  todosModule
     .bind(DI_SYMBOLS.ICreateTodoController)
     .toHigherOrderFunction(createTodoController, [
       DI_SYMBOLS.IInstrumentationService,
@@ -74,7 +76,7 @@ export function registerTodosModule(container: Container) {
       DI_SYMBOLS.ICreateTodoUseCase,
     ]);
 
-  container
+  todosModule
     .bind(DI_SYMBOLS.IGetTodosForUserController)
     .toHigherOrderFunction(getTodosForUserController, [
       DI_SYMBOLS.IInstrumentationService,
@@ -82,11 +84,13 @@ export function registerTodosModule(container: Container) {
       DI_SYMBOLS.IGetTodosForUserUseCase,
     ]);
 
-  container
+  todosModule
     .bind(DI_SYMBOLS.IToggleTodoController)
     .toHigherOrderFunction(toggleTodoController, [
       DI_SYMBOLS.IInstrumentationService,
       DI_SYMBOLS.IAuthenticationService,
       DI_SYMBOLS.IToggleTodoUseCase,
     ]);
+
+  return todosModule;
 }
