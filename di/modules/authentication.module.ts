@@ -1,4 +1,4 @@
-import { Container } from '@evyweb/ioctopus';
+import { createModule } from '@evyweb/ioctopus';
 
 import { AuthenticationService } from '@/src/infrastructure/services/authentication.service';
 import { MockAuthenticationService } from '@/src/infrastructure/services/authentication.service.mock';
@@ -13,13 +13,15 @@ import { signUpController } from '@/src/interface-adapters/controllers/auth/sign
 
 import { DI_SYMBOLS } from '@/di/types';
 
-export function registerAuthenticationModule(container: Container) {
+export function createAuthenticationModule() {
+  const authenticationModule = createModule();
+
   if (process.env.NODE_ENV === 'test') {
-    container
+    authenticationModule
       .bind(DI_SYMBOLS.IAuthenticationService)
       .toClass(MockAuthenticationService, [DI_SYMBOLS.IUsersRepository]);
   } else {
-    container
+    authenticationModule
       .bind(DI_SYMBOLS.IAuthenticationService)
       .toClass(AuthenticationService, [
         DI_SYMBOLS.IUsersRepository,
@@ -27,7 +29,7 @@ export function registerAuthenticationModule(container: Container) {
       ]);
   }
 
-  container
+  authenticationModule
     .bind(DI_SYMBOLS.ISignInUseCase)
     .toHigherOrderFunction(signInUseCase, [
       DI_SYMBOLS.IInstrumentationService,
@@ -35,14 +37,14 @@ export function registerAuthenticationModule(container: Container) {
       DI_SYMBOLS.IAuthenticationService,
     ]);
 
-  container
+  authenticationModule
     .bind(DI_SYMBOLS.ISignOutUseCase)
     .toHigherOrderFunction(signOutUseCase, [
       DI_SYMBOLS.IInstrumentationService,
       DI_SYMBOLS.IAuthenticationService,
     ]);
 
-  container
+  authenticationModule
     .bind(DI_SYMBOLS.ISignUpUseCase)
     .toHigherOrderFunction(signUpUseCase, [
       DI_SYMBOLS.IInstrumentationService,
@@ -50,14 +52,14 @@ export function registerAuthenticationModule(container: Container) {
       DI_SYMBOLS.IUsersRepository,
     ]);
 
-  container
+  authenticationModule
     .bind(DI_SYMBOLS.ISignInController)
     .toHigherOrderFunction(signInController, [
       DI_SYMBOLS.IInstrumentationService,
       DI_SYMBOLS.ISignInUseCase,
     ]);
 
-  container
+  authenticationModule
     .bind(DI_SYMBOLS.ISignOutController)
     .toHigherOrderFunction(signOutController, [
       DI_SYMBOLS.IInstrumentationService,
@@ -65,10 +67,12 @@ export function registerAuthenticationModule(container: Container) {
       DI_SYMBOLS.ISignOutUseCase,
     ]);
 
-  container
+  authenticationModule
     .bind(DI_SYMBOLS.ISignUpController)
     .toHigherOrderFunction(signUpController, [
       DI_SYMBOLS.IInstrumentationService,
       DI_SYMBOLS.ISignUpUseCase,
     ]);
+
+  return authenticationModule;
 }

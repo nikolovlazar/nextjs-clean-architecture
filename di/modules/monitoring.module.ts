@@ -1,4 +1,4 @@
-import { Container } from '@evyweb/ioctopus';
+import { createModule } from '@evyweb/ioctopus';
 
 import { MockInstrumentationService } from '@/src/infrastructure/services/instrumentation.service.mock';
 import { InstrumentationService } from '@/src/infrastructure/services/instrumentation.service';
@@ -7,20 +7,24 @@ import { CrashReporterService } from '@/src/infrastructure/services/crash-report
 
 import { DI_SYMBOLS } from '@/di/types';
 
-export function registerMonitoringModule(container: Container) {
+export function createMonitoringModule() {
+  const monitoringModule = createModule();
+
   if (process.env.NODE_ENV === 'test') {
-    container
+    monitoringModule
       .bind(DI_SYMBOLS.IInstrumentationService)
       .toClass(MockInstrumentationService);
-    container
+    monitoringModule
       .bind(DI_SYMBOLS.ICrashReporterService)
       .toClass(MockCrashReporterService);
   } else {
-    container
+    monitoringModule
       .bind(DI_SYMBOLS.IInstrumentationService)
       .toClass(InstrumentationService);
-    container
+    monitoringModule
       .bind(DI_SYMBOLS.ICrashReporterService)
       .toClass(CrashReporterService);
   }
+
+  return monitoringModule;
 }
